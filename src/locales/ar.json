@@ -1,0 +1,109 @@
+{
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "create": "إنشاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "confirm": "تأكيد",
+    "confirmDelete": "تأكيد الحذف",
+    "allGovernorates": "جميع المحافظات",
+    "selectGovernorate": "اختر المحافظة",
+    "searchPlaceholder": "البحث عن التذاكر بالعنوان...",
+    "resetFilters": "إعادة تعيين الفلاتر",
+    "filterByStatus": "تصفية حسب الحالة",
+    "filterByGovernorate": "تصفية حسب المحافظة"
+  },
+  "nav": {
+    "title": "نظام التذاكر",
+    "subtitle": "الإدارة",
+    "logout": "تسجيل خروج",
+    "admin": "مسؤول"
+  },
+  "dashboard": {
+    "title": "نظام إدارة التذاكر",
+    "subtitle": "إدارة وتتبع جميع التذاكر الخاصة بك",
+    "createNew": "إنشاء تذكرة جديدة",
+    "stats": {
+      "total": "إجمالي التذاكر",
+      "pending": "قيد الانتظار",
+      "inProgress": "قيد التنفيذ",
+      "complete": "مكتملة"
+    },
+    "empty": {
+      "title": "لم يتم العثور على تذاكر",
+      "subtitleSearch": "حاول تعديل البحث أو الفلاتر",
+      "subtitleFirst": "ابدأ بإنشاء تذكرتك الأولى",
+      "createFirst": "إنشاء تذكرتك الأولى"
+    },
+    "notifications": {
+      "created": "تم إنشاء التذكرة بنجاح!",
+      "updated": "تم تحديث التذكرة بنجاح!",
+      "deleted": "تم حذف التذكرة بنجاح!",
+      "statusUpdated": "تم تحديث حالة التذكرة!"
+    }
+  },
+  "ticket": {
+    "id": "تذكرة #{id}",
+    "status": {
+      "Pending": "قيد الانتظار",
+      "In Progress": "قيد التنفيذ",
+      "Complete": "مكتملة"
+    },
+    "createdBy": "تم الإنشاء بواسطة: {name}",
+    "completedBy": "اكتملت بواسطة: {name}",
+    "updated": "محدثة: {date}",
+    "comments": "التعليقات",
+    "problemDescription": "وصف المشكلة",
+    "quickActions": "إجراءات سريعة:",
+    "markAs": "تعيين كـ {status}",
+    "doubleClickToEdit": "انقر نقرًا مزدوجًا للتعديل"
+  },
+  "modal": {
+    "createTitle": "إنشاء تذكرة جديدة",
+    "editTitle": "تعديل التذكرة #{id}",
+    "deleteTitle": "حذف التذكرة؟",
+    "deleteConfirmMsg": "هل أنت متأكد من رغبتك في حذف التذكرة #{id}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "fields": {
+      "title": "عنوان التذكرة / MISSDN",
+      "titlePlaceholder": "أدخل وصف التذكرة",
+      "reason": "سبب التذكرة / وصف المشكلة",
+      "reasonPlaceholder": "صف المشكلة أو القضية...",
+      "governorate": "المحافظة",
+      "comments": "التعليقات / الوصف",
+      "commentsPlaceholder": "أضف أي تفاصيل إضافية",
+      "initialStatus": "الحالة المبدئية",
+      "status": "الحالة",
+      "statusDefaultMsg": "يتم تعيين الحالة على 'قيد الانتظار' بشكل افتراضي"
+    },
+    "buttons": {
+      "creating": "يتم الإنشاء...",
+      "updating": "يتم التحديث..."
+    }
+  },
+  "login": {
+    "title": "إدارة التذاكر",
+    "subtitle": "تسجيل الدخول إلى حسابك",
+    "username": "اسم المستخدم",
+    "usernamePlaceholder": "أدخل اسم المستخدم",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "أدخل كلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "invalidCreds": "اسم المستخدم أو كلمة المرور غير صحيحة",
+    "demo": "بيانات الدخول التجريبية:"
+  },
+  "validation": {
+    "requiredMissdn": "العنوان/MISSDN مطلوب",
+    "minLengthMissdn": "يجب أن يكون العنوان 5 أحرف على الأقل",
+    "maxLengthMissdn": "لا يمكن أن يتجاوز العنوان 200 حرف",
+    "requiredGov": "الرجاء اختيار المحافظة",
+    "maxLengthComments": "التعليقات يجب ألا تتجاوز 500 حرف",
+    "requiredDesc": "وصف المشكلة مطلوب",
+    "minLengthDesc": "يجب أن يكون الوصف 10 أحرف على الأقل",
+    "maxLengthDesc": "لا يمكن أن يتجاوز الوصف 1000 حرف",
+    "invalidStatus": "حالة غير صالحة",
+    "requiredUsername": "اسم المستخدم مطلوب",
+    "requiredPassword": "كلمة المرور مطلوبة"
+  }
+}

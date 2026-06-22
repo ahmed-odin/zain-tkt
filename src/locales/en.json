@@ -1,0 +1,109 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "confirmDelete": "Confirm Delete",
+    "allGovernorates": "All Governorates",
+    "selectGovernorate": "Select a governorate",
+    "searchPlaceholder": "Search tickets by title...",
+    "resetFilters": "Reset Filters",
+    "filterByStatus": "Filter by Status",
+    "filterByGovernorate": "Filter by Governorate"
+  },
+  "nav": {
+    "title": "Ticket System",
+    "subtitle": "Management",
+    "logout": "Logout",
+    "admin": "Administrator"
+  },
+  "dashboard": {
+    "title": "Ticket Management System",
+    "subtitle": "Manage and track all your tickets",
+    "createNew": "Create New Ticket",
+    "stats": {
+      "total": "Total Tickets",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "complete": "Complete"
+    },
+    "empty": {
+      "title": "No tickets found",
+      "subtitleSearch": "Try adjusting your search or filters",
+      "subtitleFirst": "Get started by creating your first ticket",
+      "createFirst": "Create Your First Ticket"
+    },
+    "notifications": {
+      "created": "Ticket created successfully!",
+      "updated": "Ticket updated successfully!",
+      "deleted": "Ticket deleted successfully!",
+      "statusUpdated": "Ticket status updated!"
+    }
+  },
+  "ticket": {
+    "id": "Ticket #{id}",
+    "status": {
+      "Pending": "Pending",
+      "In Progress": "In Progress",
+      "Complete": "Complete"
+    },
+    "createdBy": "Created by: {name}",
+    "completedBy": "Completed by: {name}",
+    "updated": "Updated: {date}",
+    "comments": "Comments",
+    "problemDescription": "Problem Description",
+    "quickActions": "Quick Actions:",
+    "markAs": "Mark as {status}",
+    "doubleClickToEdit": "Double-click to edit"
+  },
+  "modal": {
+    "createTitle": "Create New Ticket",
+    "editTitle": "Edit Ticket #{id}",
+    "deleteTitle": "Delete Ticket?",
+    "deleteConfirmMsg": "Are you sure you want to delete ticket #{id}? This action cannot be undone.",
+    "fields": {
+      "title": "Ticket Title / MISSDN",
+      "titlePlaceholder": "Enter ticket description",
+      "reason": "Reason for Ticket / Problem Description",
+      "reasonPlaceholder": "Describe the issue or problem...",
+      "governorate": "Governorate",
+      "comments": "Comments / Description",
+      "commentsPlaceholder": "Add any additional details",
+      "initialStatus": "Initial Status",
+      "status": "Status",
+      "statusDefaultMsg": "Status is set to Pending by default"
+    },
+    "buttons": {
+      "creating": "Creating...",
+      "updating": "Updating..."
+    }
+  },
+  "login": {
+    "title": "Ticket Management",
+    "subtitle": "Sign in to your account",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "invalidCreds": "Invalid username or password",
+    "demo": "Demo Credentials:"
+  },
+  "validation": {
+    "requiredMissdn": "Title/MISSDN is required",
+    "minLengthMissdn": "Title must be at least 5 characters",
+    "maxLengthMissdn": "Title cannot exceed 200 characters",
+    "requiredGov": "Please select a governorate",
+    "maxLengthComments": "Comments must not exceed 500 characters",
+    "requiredDesc": "Problem description is required",
+    "minLengthDesc": "Description must be at least 10 characters",
+    "maxLengthDesc": "Description cannot exceed 1000 characters",
+    "invalidStatus": "Invalid status",
+    "requiredUsername": "Username is required",
+    "requiredPassword": "Password is required"
+  }
+}
