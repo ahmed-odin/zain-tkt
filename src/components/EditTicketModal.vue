@@ -27,34 +27,16 @@
             v-model="form.missdn"
             type="text"
             :placeholder="$t('modal.fields.titlePlaceholder')"
-            maxlength="200"
+            inputmode="numeric"
+            pattern="[0-9]{10}"
+            maxlength="10"
+            @input="onMissdnInput"
             class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast"
             :class="{ 'border-danger': errors.missdn }"
           />
           <div class="flex justify-between mt-1">
             <p v-if="errors.missdn" class="text-danger text-small">{{ $t(errors.missdn) }}</p>
-            <p class="text-text-secondary text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.missdn.length }}/200</p>
-          </div>
-        </div>
-
-        <!-- Problem Description -->
-        <div>
-          <label for="problemDescription" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.reason') }}
-            <span class="text-danger">*</span>
-          </label>
-          <textarea
-            id="problemDescription"
-            v-model="form.problemDescription"
-            :placeholder="$t('modal.fields.reasonPlaceholder')"
-            maxlength="1000"
-            rows="6"
-            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast resize-none hover:shadow"
-            :class="{ 'border-danger': errors.problemDescription }"
-          ></textarea>
-          <div class="flex justify-between mt-1 items-center">
-            <p v-if="errors.problemDescription" class="text-danger text-small">{{ $t(errors.problemDescription) }}</p>
-            <p :class="counterClass(form.problemDescription.length)" class="text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.problemDescription.length }} / 1000</p>
+            <p class="text-text-secondary text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.missdn.length }}/10</p>
           </div>
         </div>
 
@@ -76,7 +58,7 @@
           <p v-if="errors.governorate" class="text-danger text-small mt-1">{{ $t(errors.governorate) }}</p>
         </div>
 
-        <!-- Comments Textarea -->
+        <!-- Comments Textarea (FIRST textarea) -->
         <div>
           <label for="comments" class="block text-body font-medium text-text-primary mb-2">
             {{ $t('modal.fields.comments') }}
@@ -84,7 +66,7 @@
           <textarea
             id="comments"
             v-model="form.comments"
-            :placeholder="$t('modal.fields.commentsPlaceholder')"
+            placeholder="Add any additional details..."
             maxlength="500"
             rows="4"
             class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast resize-none"
@@ -93,6 +75,44 @@
           <div class="flex justify-between mt-1">
             <p v-if="errors.comments" class="text-danger text-small">{{ $t(errors.comments) }}</p>
             <p class="text-text-secondary text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.comments.length }}/500</p>
+          </div>
+        </div>
+
+        <!-- Governorate Dropdown -->
+        <div>
+          <label for="governorate" class="block text-body font-medium text-text-primary mb-2">
+            {{ $t('modal.fields.governorate') }}
+            <span class="text-danger">*</span>
+          </label>
+          <select
+            id="governorate"
+            v-model="form.governorate"
+            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast"
+            :class="{ 'border-danger': errors.governorate }"
+          >
+            <option value="">{{ $t('common.selectGovernorate') }}</option>
+            <option v-for="gov in governorates" :key="gov" :value="gov">{{ gov }}</option>
+          </select>
+          <p v-if="errors.governorate" class="text-danger text-small mt-1">{{ $t(errors.governorate) }}</p>
+        </div>
+
+        <!-- Intermediary Comment (LAST textarea, REQUIRED) -->
+        <div>
+          <label for="problemDescription" class="block text-body font-medium text-text-primary mb-2">
+            {{ $t('modal.fields.intermediary') }}
+          </label>
+          <textarea
+            id="problemDescription"
+            v-model="form.problemDescription"
+            placeholder="Describe the issue or problem..."
+            maxlength="1000"
+            rows="6"
+            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast resize-none hover:shadow"
+            :class="{ 'border-danger': errors.problemDescription }"
+          ></textarea>
+          <div class="flex justify-between mt-1 items-center">
+            <p v-if="errors.problemDescription" class="text-danger text-small">{{ $t(errors.problemDescription) }}</p>
+            <p :class="counterClass(form.problemDescription.length)" class="text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.problemDescription.length }} / 1000</p>
           </div>
         </div>
 
@@ -109,7 +129,6 @@
             :class="{ 'border-danger': errors.status }"
           >
             <option value="Pending">{{ $t('ticket.status.Pending') }}</option>
-            <option value="In Progress">{{ $t('ticket.status.In Progress') }}</option>
             <option value="Complete">{{ $t('ticket.status.Complete') }}</option>
           </select>
           <p v-if="errors.status" class="text-danger text-small mt-1">{{ $t(errors.status) }}</p>
@@ -221,5 +240,19 @@ const handleSubmit = async () => {
   setTimeout(() => {
     emit('updated');
   }, 300);
+};
+
+const normalizeDigits = (s) => {
+  if (!s) return s;
+  return s.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, (d) => {
+    return String(d.charCodeAt(0) & 0xF);
+  });
+};
+
+const onMissdnInput = (e) => {
+  let v = e.target.value || '';
+  v = normalizeDigits(v);
+  v = v.replace(/\D/g, '').slice(0, 10);
+  form.value.missdn = v;
 };
 </script>

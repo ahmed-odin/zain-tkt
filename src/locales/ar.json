@@ -9,7 +9,7 @@
     "confirmDelete": "تأكيد الحذف",
     "allGovernorates": "جميع المحافظات",
     "selectGovernorate": "اختر المحافظة",
-    "searchPlaceholder": "البحث عن التذاكر بالعنوان...",
+    "searchPlaceholder": "البحث عن التذاكر بالعنوان أو MISSDN...",
     "resetFilters": "إعادة تعيين الفلاتر",
     "filterByStatus": "تصفية حسب الحالة",
     "filterByGovernorate": "تصفية حسب المحافظة"
@@ -41,20 +41,29 @@
       "updated": "تم تحديث التذكرة بنجاح!",
       "deleted": "تم حذف التذكرة بنجاح!",
       "statusUpdated": "تم تحديث حالة التذكرة!"
+    },
+    "table": {
+      "id": "رقم",
+      "missdn": "MISSDN",
+      "governorate": "المحافظة",
+      "status": "الحالة",
+      "createdBy": "بواسطة",
+      "createdAt": "تاريخ الإنشاء",
+      "updatedAt": "تاريخ التحديث",
+      "actions": "إجراءات"
     }
   },
   "ticket": {
     "id": "تذكرة #{id}",
     "status": {
       "Pending": "قيد الانتظار",
-      "In Progress": "قيد التنفيذ",
       "Complete": "مكتملة"
     },
     "createdBy": "تم الإنشاء بواسطة: {name}",
     "completedBy": "اكتملت بواسطة: {name}",
     "updated": "محدثة: {date}",
     "comments": "التعليقات",
-    "problemDescription": "وصف المشكلة",
+    "problemDescription": "تعليق الوسيط",
     "quickActions": "إجراءات سريعة:",
     "markAs": "تعيين كـ {status}",
     "doubleClickToEdit": "انقر نقرًا مزدوجًا للتعديل"
@@ -65,13 +74,14 @@
     "deleteTitle": "حذف التذكرة؟",
     "deleteConfirmMsg": "هل أنت متأكد من رغبتك في حذف التذكرة #{id}؟ لا يمكن التراجع عن هذا الإجراء.",
     "fields": {
-      "title": "عنوان التذكرة / MISSDN",
-      "titlePlaceholder": "أدخل وصف التذكرة",
-      "reason": "سبب التذكرة / وصف المشكلة",
-      "reasonPlaceholder": "صف المشكلة أو القضية...",
+      "title": "MISSDN",
+      "titlePlaceholder": "0000000000",
+      "reason": "تعليق الوسيط",
+      "reasonPlaceholder": "أدخل تعليق الوسيط...",
       "governorate": "المحافظة",
       "comments": "التعليقات / الوصف",
       "commentsPlaceholder": "أضف أي تفاصيل إضافية",
+      "intermediary": "تعليق شركة الوسيط",
       "initialStatus": "الحالة المبدئية",
       "status": "الحالة",
       "statusDefaultMsg": "يتم تعيين الحالة على 'قيد الانتظار' بشكل افتراضي"
@@ -80,6 +90,19 @@
       "creating": "يتم الإنشاء...",
       "updating": "يتم التحديث..."
     }
+  },
+  "pages": {
+    "createTitle": "إنشاء تكت",
+    "pendingTitle": "التكتات قيد الانتظار",
+    "completedTitle": "التكتات المكتملة",
+    "createTab": "إنشاء تكت",
+    "pendingTab": "قيد الانتظار",
+    "completedTab": "مكتملة",
+    "completedBy": "مكتمل بواسطة"
+  },
+  "actions": {
+    "markComplete": "وضع علامة مكتملة",
+    "reopen": "إعادة فتح التكت"
   },
   "login": {
     "title": "إدارة التذاكر",
@@ -94,9 +117,9 @@
     "demo": "بيانات الدخول التجريبية:"
   },
   "validation": {
-    "requiredMissdn": "العنوان/MISSDN مطلوب",
-    "minLengthMissdn": "يجب أن يكون العنوان 5 أحرف على الأقل",
-    "maxLengthMissdn": "لا يمكن أن يتجاوز العنوان 200 حرف",
+    "requiredMissdn": "MISSDN مطلوب",
+    "lengthMissdn": "يجب أن يتكون MISSDN من 10 أرقام بالضبط",
+    "invalidMissdn": "يجب أن يحتوي MISSDN على أرقام فقط",
     "requiredGov": "الرجاء اختيار المحافظة",
     "maxLengthComments": "التعليقات يجب ألا تتجاوز 500 حرف",
     "requiredDesc": "وصف المشكلة مطلوب",

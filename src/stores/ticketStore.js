@@ -95,6 +95,11 @@ export const useTicketStore = defineStore('ticket', () => {
     return false;
   };
 
+  // Update status helper
+  const updateStatus = (id, status, user = null) => {
+    return updateTicket(id, { status }, user);
+  };
+
   // Get ticket by ID
   const getTicketById = (id) => {
     return tickets.value.find(t => t.id === id);
@@ -130,7 +135,6 @@ export const useTicketStore = defineStore('ticket', () => {
     return {
       total: tickets.value.length,
       pending: tickets.value.filter(t => t.status === 'Pending').length,
-      inProgress: tickets.value.filter(t => t.status === 'In Progress').length,
       complete: tickets.value.filter(t => t.status === 'Complete').length
     };
   };
@@ -165,6 +169,7 @@ export const useTicketStore = defineStore('ticket', () => {
     searchTickets,
     getTicketStats,
     getGovernorateStats,
+    updateStatus,
     getNextId
   };
 });

@@ -15,6 +15,24 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+    path: '/create',
+    name: 'CreateTicket',
+    component: () => import('./views/CreateTicketPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/pending',
+    name: 'PendingTickets',
+    component: () => import('./views/PendingTicketsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/completed',
+    name: 'CompletedTickets',
+    component: () => import('./views/CompletedTicketsPage.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/'
   }

@@ -5,8 +5,11 @@ export function validateMissdn(value) {
   if (!value || !value.trim()) {
     return 'validation.requiredMissdn';
   }
-  if (value.length > 200) {
-    return 'validation.maxLengthMissdn';
+  if (!/^[0-9]+$/.test(value)) {
+    return 'validation.invalidMissdn';
+  }
+  if (value.length !== 10) {
+    return 'validation.lengthMissdn';
   }
   return '';
 }
@@ -35,8 +38,9 @@ export function validateComments(value) {
  * Validate problem description (required, min 10, max 1000)
  */
 export function validateProblemDescription(value) {
+  // Make intermediary comment optional: only validate when non-empty
   if (!value || !value.trim()) {
-    return 'validation.requiredDesc';
+    return '';
   }
   if (value.trim().length < 10) {
     return 'validation.minLengthDesc';
@@ -51,7 +55,7 @@ export function validateProblemDescription(value) {
  * Validate status
  */
 export function validateStatus(value) {
-  const validStatuses = ['Pending', 'In Progress', 'Complete'];
+  const validStatuses = ['Pending', 'Complete'];
   if (!validStatuses.includes(value)) {
     return 'validation.invalidStatus';
   }

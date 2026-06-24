@@ -42,6 +42,17 @@
           </button>
         </div>
       </div>
+
+      <!-- Navigation Tabs -->
+      <div class="bg-bg-secondary">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center gap-2 py-2">
+            <router-link to="/create" class="px-3 py-2 rounded-btn" :class="$route.name === 'CreateTicket' ? 'bg-primary text-white' : 'text-text-primary'">{{ $t('pages.createTab') }}</router-link>
+            <router-link to="/pending" class="px-3 py-2 rounded-btn" :class="$route.name === 'PendingTickets' ? 'bg-primary text-white' : 'text-text-primary'">{{ $t('pages.pendingTab') }}</router-link>
+            <router-link to="/completed" class="px-3 py-2 rounded-btn" :class="$route.name === 'CompletedTickets' ? 'bg-primary text-white' : 'text-text-primary'">{{ $t('pages.completedTab') }}</router-link>
+          </div>
+        </div>
+      </div>
     </div>
   </nav>
 </template>

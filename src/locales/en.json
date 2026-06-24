@@ -9,7 +9,7 @@
     "confirmDelete": "Confirm Delete",
     "allGovernorates": "All Governorates",
     "selectGovernorate": "Select a governorate",
-    "searchPlaceholder": "Search tickets by title...",
+    "searchPlaceholder": "Search tickets by title or MISSDN...",
     "resetFilters": "Reset Filters",
     "filterByStatus": "Filter by Status",
     "filterByGovernorate": "Filter by Governorate"
@@ -41,20 +41,29 @@
       "updated": "Ticket updated successfully!",
       "deleted": "Ticket deleted successfully!",
       "statusUpdated": "Ticket status updated!"
+    },
+    "table": {
+      "id": "ID",
+      "missdn": "MISSDN",
+      "governorate": "Governorate",
+      "status": "Status",
+      "createdBy": "Created By",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "actions": "Actions"
     }
   },
   "ticket": {
     "id": "Ticket #{id}",
     "status": {
       "Pending": "Pending",
-      "In Progress": "In Progress",
       "Complete": "Complete"
     },
     "createdBy": "Created by: {name}",
     "completedBy": "Completed by: {name}",
     "updated": "Updated: {date}",
     "comments": "Comments",
-    "problemDescription": "Problem Description",
+    "problemDescription": "Intermediary Comment",
     "quickActions": "Quick Actions:",
     "markAs": "Mark as {status}",
     "doubleClickToEdit": "Double-click to edit"
@@ -65,13 +74,14 @@
     "deleteTitle": "Delete Ticket?",
     "deleteConfirmMsg": "Are you sure you want to delete ticket #{id}? This action cannot be undone.",
     "fields": {
-      "title": "Ticket Title / MISSDN",
-      "titlePlaceholder": "Enter ticket description",
-      "reason": "Reason for Ticket / Problem Description",
-      "reasonPlaceholder": "Describe the issue or problem...",
+      "title": "MISSDN",
+      "titlePlaceholder": "0000000000",
+      "reason": "Intermediary Comment",
+      "reasonPlaceholder": "Enter intermediary comment...",
       "governorate": "Governorate",
       "comments": "Comments / Description",
       "commentsPlaceholder": "Add any additional details",
+      "intermediary": "Intermediary Company Comment",
       "initialStatus": "Initial Status",
       "status": "Status",
       "statusDefaultMsg": "Status is set to Pending by default"
@@ -80,6 +90,19 @@
       "creating": "Creating...",
       "updating": "Updating..."
     }
+  },
+  "pages": {
+    "createTitle": "Create Ticket",
+    "pendingTitle": "Pending Tickets",
+    "completedTitle": "Completed Tickets",
+    "createTab": "Create Ticket",
+    "pendingTab": "Pending",
+    "completedTab": "Completed",
+    "completedBy": "Completed By"
+  },
+  "actions": {
+    "markComplete": "Mark as Complete",
+    "reopen": "Reopen Ticket"
   },
   "login": {
     "title": "Ticket Management",
@@ -94,9 +117,9 @@
     "demo": "Demo Credentials:"
   },
   "validation": {
-    "requiredMissdn": "Title/MISSDN is required",
-    "minLengthMissdn": "Title must be at least 5 characters",
-    "maxLengthMissdn": "Title cannot exceed 200 characters",
+    "requiredMissdn": "MISSDN is required",
+    "lengthMissdn": "MISSDN must be exactly 10 digits",
+    "invalidMissdn": "MISSDN must contain only numbers",
     "requiredGov": "Please select a governorate",
     "maxLengthComments": "Comments must not exceed 500 characters",
     "requiredDesc": "Problem description is required",
