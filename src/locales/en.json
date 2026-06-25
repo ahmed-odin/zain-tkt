@@ -5,11 +5,13 @@
     "create": "Create",
     "edit": "Edit",
     "delete": "Delete",
+    "close": "Close",
     "confirm": "Confirm",
     "confirmDelete": "Confirm Delete",
     "allGovernorates": "All Governorates",
     "selectGovernorate": "Select a governorate",
-    "searchPlaceholder": "Search tickets by title or MISSDN...",
+    "search": "Search tickets...",
+    "searchPlaceholder": "Search tickets by MISSDN...",
     "resetFilters": "Reset Filters",
     "filterByStatus": "Filter by Status",
     "filterByGovernorate": "Filter by Governorate"
@@ -63,10 +65,17 @@
     "completedBy": "Completed by: {name}",
     "updated": "Updated: {date}",
     "comments": "Comments",
-    "problemDescription": "Intermediary Comment",
+    "problemDescription": "Alwaseet Company",
     "quickActions": "Quick Actions:",
     "markAs": "Mark as {status}",
     "doubleClickToEdit": "Double-click to edit"
+  },
+  "details": {
+    "title": "Ticket #{id} Details",
+    "createdBy": "Created By",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "completedAt": "Completed At"
   },
   "modal": {
     "createTitle": "Create New Ticket",
@@ -75,13 +84,14 @@
     "deleteConfirmMsg": "Are you sure you want to delete ticket #{id}? This action cannot be undone.",
     "fields": {
       "title": "MISSDN",
-      "titlePlaceholder": "0000000000",
-      "reason": "Intermediary Comment",
-      "reasonPlaceholder": "Enter intermediary comment...",
+      "titlePlaceholder": "78*******",
+      "reason": "Alwaseet Company",
+      "reasonPlaceholder": "Enter company name or details...",
       "governorate": "Governorate",
       "comments": "Comments / Description",
       "commentsPlaceholder": "Add any additional details",
-      "intermediary": "Intermediary Company Comment",
+      "intermediary": "Alwaseet Company",
+      "intermediaryPlaceholder": "Enter company name or details...",
       "initialStatus": "Initial Status",
       "status": "Status",
       "statusDefaultMsg": "Status is set to Pending by default"
@@ -96,13 +106,31 @@
     "pendingTitle": "Pending Tickets",
     "completedTitle": "Completed Tickets",
     "createTab": "Create Ticket",
-    "pendingTab": "Pending",
-    "completedTab": "Completed",
+    "pendingTab": "Pending Tickets",
+    "completedTab": "Completed Tickets",
     "completedBy": "Completed By"
   },
   "actions": {
     "markComplete": "Mark as Complete",
-    "reopen": "Reopen Ticket"
+    "reopen": "Reopen Ticket",
+    "importExcel": "Import from Excel"
+  },
+  "excel": {
+    "exportButton": "Export to Excel",
+    "importTitle": "Import Excel File",
+    "importDescription": "Select a .xlsx, .xls, .ods, or .csv file with pending ticket rows to import.",
+    "parsingFile": "Reading file...",
+    "previewTitle": "Preview valid rows",
+    "previewSubtitle": "Showing up to 5 of {count}",
+    "previewMore": "and {count} more valid rows",
+    "totalRows": "Total rows: {count}",
+    "validRows": "Valid rows: {count}",
+    "errorsCount": "Errors: {count}",
+    "warningsCount": "Warnings: {count}",
+    "errorListTitle": "Import Errors",
+    "warningListTitle": "Import Warnings",
+    "importValidButton": "Import {count} Tickets",
+    "importSuccess": "{count} tickets imported successfully"
   },
   "login": {
     "title": "Ticket Management",
@@ -122,9 +150,10 @@
     "invalidMissdn": "MISSDN must contain only numbers",
     "requiredGov": "Please select a governorate",
     "maxLengthComments": "Comments must not exceed 500 characters",
+    "requiredAlwaseetCompany": "Alwaseet Company field is required before marking as complete",
     "requiredDesc": "Problem description is required",
     "minLengthDesc": "Description must be at least 10 characters",
-    "maxLengthDesc": "Description cannot exceed 1000 characters",
+    "maxLengthDesc": "Description cannot exceed 5000 characters",
     "invalidStatus": "Invalid status",
     "requiredUsername": "Username is required",
     "requiredPassword": "Password is required"

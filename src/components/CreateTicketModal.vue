@@ -1,139 +1,119 @@
 <template>
-  <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-40">
-    <div class="bg-white rounded-modal shadow-modal w-full max-w-md sm:max-w-lg md:max-w-2xl max-h-[90vh] overflow-y-auto">
-      <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-border sticky top-0 bg-white z-10">
-        <h2 class="text-h2 font-bold text-text-primary">{{ $t('modal.createTitle') }}</h2>
-        <button
-          @click="emit('close')"
-          class="p-2 hover:bg-bg-secondary rounded-btn transition-all duration-base rtl:rotate-0"
-        >
-          <svg class="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
+  <div
+    :class="inline ? '' : 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-40'"
+    @click.self="!inline && closeModal()"
+  >
+      <div
+        :class="[
+          inline
+            ? 'w-full max-w-md bg-white rounded-lg p-4 max-h-[85vh] overflow-hidden flex flex-col'
+            : 'w-full max-w-md bg-white rounded-lg p-4 max-h-[85vh] overflow-hidden flex flex-col'
+        ]"
+        @click.stop
+      >
+      <button
+        v-if="!inline"
+        @click="closeModal"
+        class="absolute top-4 right-4 rtl:right-auto rtl:left-4 text-gray-500 hover:text-gray-700 text-2xl cursor-pointer leading-none"
+        aria-label="Close"
+      >
+        ✕
+      </button>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="p-6 flex flex-col gap-3 sm:gap-4">
-        <!-- MISSDN Input -->
+      <h2
+        :class="[
+          'text-lg font-bold text-text-primary mb-3',
+          !inline ? 'pr-8 rtl:pr-0 rtl:pl-8' : ''
+        ]"
+      >
+        {{ $t('modal.createTitle') }}
+      </h2>
+
+      <form @submit.prevent="handleSubmit" class="flex-1 flex flex-col gap-1.5 text-sm">
+        <!-- MISSDN -->
         <div>
-          <label for="missdn" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.title') }}
-            <span class="text-danger">*</span>
-          </label>
-          <input
-            id="missdn"
-            v-model="form.missdn"
-            type="text"
-            :placeholder="$t('modal.fields.titlePlaceholder')"
-            inputmode="numeric"
-            pattern="[0-9]{10}"
-            maxlength="10"
-            @input="onMissdnInput"
-            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast"
-            :class="{ 'border-danger': errors.missdn }"
-          />
-          <div class="flex justify-between mt-1">
-            <p v-if="errors.missdn" class="text-danger text-small">{{ $t(errors.missdn) }}</p>
-            <p class="text-text-secondary text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.missdn.length }}/10</p>
+          <div class="flex flex-col gap-0.5">
+            <label for="create-missdn" class="text-xs font-semibold" style="color:#5E35B1">{{ $t('modal.fields.title') }} <span class="text-danger">*</span></label>
+            <input
+              id="create-missdn"
+              v-model="form.missdn"
+              type="text"
+              :placeholder="$t('modal.fields.titlePlaceholder')"
+              inputmode="numeric"
+              maxlength="10"
+              @input="onMissdnInput"
+              class="w-full px-2 py-1 text-sm bg-purple-100 border border-purple-300 rounded-md focus:bg-purple-50 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 transition-all"
+              :class="{ 'border-danger': errors.missdn }"
+            />
+            <div class="flex justify-between mt-0.5">
+              <p v-if="errors.missdn" class="text-danger text-xs">{{ $t(errors.missdn) }}</p>
+              <p class="text-text-secondary text-xs ml-auto rtl:ml-0 rtl:mr-auto">{{ form.missdn.length }}/10</p>
+            </div>
           </div>
         </div>
 
-        <!-- Comments Textarea (FIRST textarea) -->
-        <div>
-          <label for="comments" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.comments') }}
-          </label>
+        <!-- Comments -->
+        <div class="flex flex-col gap-0.5">
+          <label for="create-comments" class="text-xs font-semibold" style="color:#5E35B1">{{ $t('modal.fields.comments') }}</label>
           <textarea
-            id="comments"
+            id="create-comments"
             v-model="form.comments"
-            placeholder="Add any additional details..."
+            :placeholder="$t('modal.fields.commentsPlaceholder')"
             maxlength="500"
-            rows="4"
-            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast resize-none"
+            rows="3"
+            class="w-full px-2 py-1 text-sm bg-purple-100 border border-purple-300 rounded-md resize-none focus:bg-purple-50 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 transition-all"
             :class="{ 'border-danger': errors.comments }"
           ></textarea>
-          <div class="flex justify-between mt-1">
-            <p v-if="errors.comments" class="text-danger text-small">{{ $t(errors.comments) }}</p>
-            <p class="text-text-secondary text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.comments.length }}/500</p>
+          <div class="flex justify-between mt-0.5">
+            <p v-if="errors.comments" class="text-danger text-xs">{{ $t(errors.comments) }}</p>
+            <p class="text-text-secondary text-xs ml-auto rtl:ml-0 rtl:mr-auto">{{ form.comments.length }}/500</p>
           </div>
         </div>
 
-        <!-- Governorate Dropdown -->
-        <div>
-          <label for="governorate" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.governorate') }}
-            <span class="text-danger">*</span>
-          </label>
+        <!-- Governorate -->
+        <div class="flex flex-col gap-0.5">
+          <label for="create-governorate" class="text-xs font-semibold" style="color:#5E35B1">{{ $t('modal.fields.governorate') }} <span class="text-danger">*</span></label>
           <select
-            id="governorate"
+            id="create-governorate"
             v-model="form.governorate"
-            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast"
+            class="w-full px-2 py-1 text-sm bg-purple-100 border border-purple-300 rounded-md focus:bg-purple-50 focus:border-purple-600 focus:outline-none focus:ring-1 focus:ring-purple-600 transition-all"
             :class="{ 'border-danger': errors.governorate }"
           >
             <option value="">{{ $t('common.selectGovernorate') }}</option>
             <option v-for="gov in governorates" :key="gov" :value="gov">{{ gov }}</option>
           </select>
-          <p v-if="errors.governorate" class="text-danger text-small mt-1">{{ $t(errors.governorate) }}</p>
+          <p v-if="errors.governorate" class="text-danger text-xs mt-0.5">{{ $t(errors.governorate) }}</p>
         </div>
 
-        <!-- Intermediary Comment (LAST textarea, REQUIRED) -->
-        <div>
-          <label for="problemDescription" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.intermediary') }}
-          </label>
-          <textarea
-            id="problemDescription"
-            v-model="form.problemDescription"
-            placeholder="Describe the issue or problem..."
-            maxlength="1000"
-            rows="6"
-            class="w-full px-3 py-2 border border-border rounded-btn focus:outline-none focus:border-primary focus:ring-2 focus:ring-blue-100 transition-all duration-fast resize-none hover:shadow"
-            :class="{ 'border-danger': errors.problemDescription }"
-          ></textarea>
-          <div class="flex justify-between mt-1 items-center">
-            <p v-if="errors.problemDescription" class="text-danger text-small">{{ $t(errors.problemDescription) }}</p>
-            <p :class="counterClass(form.problemDescription.length)" class="text-small ml-auto rtl:ml-0 rtl:mr-auto">{{ form.problemDescription.length }} / 1000</p>
-          </div>
-        </div>
+        <!-- removed Alwaseet Company from Create -->
 
-        <!-- Status Input (Disabled) -->
-        <div class="mb-2">
-          <label for="status" class="block text-body font-medium text-text-primary mb-2">
-            {{ $t('modal.fields.initialStatus') }}
-          </label>
+        <!-- Status -->
+        <div class="flex flex-col gap-0.5">
+          <label for="create-status" class="text-xs font-semibold" style="color:#1565C0">{{ $t('modal.fields.initialStatus') }}</label>
           <select
-            id="status"
+            id="create-status"
             v-model="form.status"
             disabled
-            class="w-full px-3 py-2 border border-border rounded-btn bg-bg-secondary text-text-secondary cursor-not-allowed opacity-60"
+            class="w-full px-2 py-1 text-sm bg-blue-100 border border-blue-300 rounded-md focus:bg-blue-50 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-not-allowed opacity-80"
           >
             <option value="Pending">{{ $t('ticket.status.Pending') }}</option>
           </select>
-          <p class="text-text-secondary text-small mt-1">{{ $t('modal.fields.statusDefaultMsg') }}</p>
         </div>
 
-        <!-- Form Actions -->
-        <div class="flex gap-3 mt-4">
+        <!-- Actions -->
+        <div class="flex gap-2 mt-2">
           <button
             type="submit"
             :disabled="isSubmitting || !isFormValid"
-            class="flex-1 bg-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-btn transition-all duration-base hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            class="flex-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
           >
             <span v-if="!isSubmitting">{{ $t('common.create') }}</span>
-            <span v-else class="flex items-center gap-2">
-                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {{ $t('modal.buttons.creating') }}
-            </span>
+            <span v-else>{{ $t('modal.buttons.creating') }}</span>
           </button>
           <button
             type="button"
-            @click="emit('close')"
-            class="flex-1 bg-border hover:bg-border-accent text-text-primary font-medium py-2 px-4 rounded-btn transition-all duration-base"
+            @click="closeModal"
+            class="flex-1 px-3 py-1.5 bg-gray-200 text-gray-700 text-sm rounded-md hover:bg-gray-300 transition-colors"
           >
             {{ $t('common.cancel') }}
           </button>
@@ -144,10 +124,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useTicketStore } from '../stores/ticketStore';
 import { useAuthStore } from '../stores/authStore';
-import { validateTicketForm, validateMissdn, validateGovernorate, validateProblemDescription } from '../utils/validators';
+import { validateTicketForm, validateMissdn, validateGovernorate } from '../utils/validators';
+
+const props = defineProps({
+  inline: { type: Boolean, default: false }
+});
 
 const emit = defineEmits(['close', 'created']);
 
@@ -156,7 +140,6 @@ const authStore = useAuthStore();
 
 const form = ref({
   missdn: '',
-  problemDescription: '',
   governorate: '',
   comments: '',
   status: 'Pending'
@@ -166,29 +149,32 @@ const errors = ref({});
 const isSubmitting = ref(false);
 
 const governorates = [
-  'بغداد', 'البصرة', 'الموصل', 'كركوك', 'أربيل', 'السليمانية', 'دهوك',
+  'بغداد', 'البصرة', 'الموصل', 'كركوك',
   'الأنبار', 'صلاح الدين', 'ديالى', 'واسط', 'بابل', 'كربلاء', 'النجف',
   'المثنى', 'ذي قار', 'ميسان', 'نينوى'
 ];
 
-const counterClass = (len) => {
-  const pct = (len / 1000) * 100;
-  if (pct > 95) return 'text-danger';
-  if (pct >= 80) return 'text-warning';
-  return 'text-text-secondary';
+const isFormValid = computed(() => {
+  return !validateMissdn(form.value.missdn)
+    && !validateGovernorate(form.value.governorate);
+});
+
+const closeModal = () => emit('close');
+
+const handleEscape = (e) => {
+  if (!props.inline && e.key === 'Escape') closeModal();
 };
 
-const isFormValid = computed(() => {
-  const missdnErr = validateMissdn(form.value.missdn);
-  const govErr = validateGovernorate(form.value.governorate);
-  const probErr = validateProblemDescription(form.value.problemDescription);
-  return !missdnErr && !govErr && !probErr;
+onMounted(() => {
+  if (!props.inline) document.addEventListener('keydown', handleEscape);
+});
+
+onUnmounted(() => {
+  if (!props.inline) document.removeEventListener('keydown', handleEscape);
 });
 
 const handleSubmit = async () => {
   errors.value = {};
-
-  // Validate form
   const validationErrors = validateTicketForm(form.value);
   if (Object.keys(validationErrors).length > 0) {
     errors.value = validationErrors;
@@ -196,26 +182,15 @@ const handleSubmit = async () => {
   }
 
   isSubmitting.value = true;
-
-  // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 300));
-
-  // Create ticket
   ticketStore.addTicket(form.value, authStore.currentUser);
-
   isSubmitting.value = false;
-
-  // Close modal after 300ms
-  setTimeout(() => {
-    emit('created');
-  }, 300);
+  setTimeout(() => emit('created'), 300);
 };
 
 const normalizeDigits = (s) => {
   if (!s) return s;
-  return s.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, (d) => {
-    return String(d.charCodeAt(0) & 0xF);
-  });
+  return s.replace(/[\u0660-\u0669\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) & 0xF));
 };
 
 const onMissdnInput = (e) => {

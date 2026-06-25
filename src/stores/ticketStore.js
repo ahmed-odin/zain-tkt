@@ -49,7 +49,8 @@ export const useTicketStore = defineStore('ticket', () => {
       createdBy: creator,
       completedBy: null,
       createdAt: getCurrentDateTime(),
-      updatedAt: getCurrentDateTime()
+      updatedAt: getCurrentDateTime(),
+      completedAt: null
     };
     
     tickets.value.push(newTicket);
@@ -68,13 +69,15 @@ export const useTicketStore = defineStore('ticket', () => {
     if (updates.governorate !== undefined) ticket.governorate = updates.governorate;
     if (updates.comments !== undefined) ticket.comments = updates.comments;
     
-    // If status is being changed to Complete, set completedBy
+    // If status is being changed to Complete, set completedBy and completedAt
     if (updates.status === 'Complete' && ticket.status !== 'Complete') {
       ticket.completedBy = currentUser;
+      ticket.completedAt = getCurrentDateTime();
     }
     // If status changes away from Complete, clear completedBy
     if (updates.status !== 'Complete' && ticket.status === 'Complete') {
       ticket.completedBy = null;
+      ticket.completedAt = null;
     }
     
     if (updates.status !== undefined) ticket.status = updates.status;
@@ -82,17 +85,6 @@ export const useTicketStore = defineStore('ticket', () => {
 
     saveToLocalStorage();
     return ticket;
-  };
-
-  // Delete a ticket
-  const deleteTicket = (id) => {
-    const index = tickets.value.findIndex(t => t.id === id);
-    if (index !== -1) {
-      tickets.value.splice(index, 1);
-      saveToLocalStorage();
-      return true;
-    }
-    return false;
   };
 
   // Update status helper
@@ -164,7 +156,6 @@ export const useTicketStore = defineStore('ticket', () => {
     initializeTickets,
     addTicket,
     updateTicket,
-    deleteTicket,
     getTicketById,
     searchTickets,
     getTicketStats,

@@ -35,17 +35,16 @@ export function validateComments(value) {
 }
 
 /**
- * Validate problem description (required, min 10, max 1000)
+ * Validate Alwaseet Company field (optional free text, max 5000)
  */
-export function validateProblemDescription(value) {
-  // Make intermediary comment optional: only validate when non-empty
+export function validateProblemDescription(value, status = '') {
+  if (status === 'Complete' && (!value || !value.trim())) {
+    return 'validation.requiredAlwaseetCompany';
+  }
   if (!value || !value.trim()) {
     return '';
   }
-  if (value.trim().length < 10) {
-    return 'validation.minLengthDesc';
-  }
-  if (value.length > 1000) {
+  if (value.length > 5000) {
     return 'validation.maxLengthDesc';
   }
   return '';
@@ -71,7 +70,7 @@ export function validateTicketForm(formData) {
   const missdnError = validateMissdn(formData.missdn);
   if (missdnError) errors.missdn = missdnError;
   
-  const problemError = validateProblemDescription(formData.problemDescription);
+  const problemError = validateProblemDescription(formData.problemDescription, formData.status);
   if (problemError) errors.problemDescription = problemError;
   
   const governorateError = validateGovernorate(formData.governorate);

@@ -5,11 +5,13 @@
     "create": "إنشاء",
     "edit": "تعديل",
     "delete": "حذف",
+    "close": "إغلاق",
     "confirm": "تأكيد",
     "confirmDelete": "تأكيد الحذف",
     "allGovernorates": "جميع المحافظات",
     "selectGovernorate": "اختر المحافظة",
-    "searchPlaceholder": "البحث عن التذاكر بالعنوان أو MISSDN...",
+    "search": "البحث في التذاكر...",
+    "searchPlaceholder": "البحث عن التذاكر بـ MISSDN...",
     "resetFilters": "إعادة تعيين الفلاتر",
     "filterByStatus": "تصفية حسب الحالة",
     "filterByGovernorate": "تصفية حسب المحافظة"
@@ -63,10 +65,17 @@
     "completedBy": "اكتملت بواسطة: {name}",
     "updated": "محدثة: {date}",
     "comments": "التعليقات",
-    "problemDescription": "تعليق الوسيط",
+    "problemDescription": "شركة الوسيط",
     "quickActions": "إجراءات سريعة:",
     "markAs": "تعيين كـ {status}",
     "doubleClickToEdit": "انقر نقرًا مزدوجًا للتعديل"
+  },
+  "details": {
+    "title": "تفاصيل التذكرة #{id}",
+    "createdBy": "أنشئ بواسطة",
+    "createdAt": "تاريخ الإنشاء",
+    "updatedAt": "تاريخ التحديث",
+    "completedAt": "تاريخ الإكمال"
   },
   "modal": {
     "createTitle": "إنشاء تذكرة جديدة",
@@ -75,13 +84,14 @@
     "deleteConfirmMsg": "هل أنت متأكد من رغبتك في حذف التذكرة #{id}؟ لا يمكن التراجع عن هذا الإجراء.",
     "fields": {
       "title": "MISSDN",
-      "titlePlaceholder": "0000000000",
-      "reason": "تعليق الوسيط",
-      "reasonPlaceholder": "أدخل تعليق الوسيط...",
+      "titlePlaceholder": "*******78",
+      "reason": "شركة الوسيط",
+      "reasonPlaceholder": "أدخل اسم الشركة أو التفاصيل...",
       "governorate": "المحافظة",
       "comments": "التعليقات / الوصف",
       "commentsPlaceholder": "أضف أي تفاصيل إضافية",
-      "intermediary": "تعليق شركة الوسيط",
+      "intermediary": "شركة الوسيط",
+      "intermediaryPlaceholder": "أدخل اسم الشركة أو التفاصيل...",
       "initialStatus": "الحالة المبدئية",
       "status": "الحالة",
       "statusDefaultMsg": "يتم تعيين الحالة على 'قيد الانتظار' بشكل افتراضي"
@@ -92,17 +102,35 @@
     }
   },
   "pages": {
-    "createTitle": "إنشاء تكت",
-    "pendingTitle": "التكتات قيد الانتظار",
-    "completedTitle": "التكتات المكتملة",
-    "createTab": "إنشاء تكت",
+    "createTitle": "إنشاء تذكرة",
+    "pendingTitle": "التذاكر قيد الانتظار",
+    "completedTitle": "التذاكر المكتملة",
+    "createTab": "إنشاء تذكرة",
     "pendingTab": "قيد الانتظار",
     "completedTab": "مكتملة",
     "completedBy": "مكتمل بواسطة"
   },
   "actions": {
     "markComplete": "وضع علامة مكتملة",
-    "reopen": "إعادة فتح التكت"
+    "reopen": "إعادة فتح التذكرة",
+    "importExcel": "استيراد من Excel"
+  },
+  "excel": {
+    "exportButton": "تصدير إلى Excel",
+    "importTitle": "استيراد ملف Excel",
+    "importDescription": "اختر ملف .xlsx أو .xls أو .ods أو .csv يحتوي على صفوف التذاكر المعلقة للاستيراد.",
+    "parsingFile": "جاري قراءة الملف...",
+    "previewTitle": "معاينة الصفوف الصحيحة",
+    "previewSubtitle": "عرض حتى 5 من أصل {count}",
+    "previewMore": "و {count} صفوف صحيحة إضافية",
+    "totalRows": "إجمالي الصفوف: {count}",
+    "validRows": "الصفوف الصالحة: {count}",
+    "errorsCount": "الأخطاء: {count}",
+    "warningsCount": "التحذيرات: {count}",
+    "errorListTitle": "أخطاء الاستيراد",
+    "warningListTitle": "تحذيرات الاستيراد",
+    "importValidButton": "استيراد {count} تذكرة",
+    "importSuccess": "تم استيراد {count} تذاكر بنجاح"
   },
   "login": {
     "title": "إدارة التذاكر",
@@ -122,9 +150,10 @@
     "invalidMissdn": "يجب أن يحتوي MISSDN على أرقام فقط",
     "requiredGov": "الرجاء اختيار المحافظة",
     "maxLengthComments": "التعليقات يجب ألا تتجاوز 500 حرف",
+    "requiredAlwaseetCompany": "يجب ملء حقل شركة الوسيط قبل تحديد المهمة كمكتملة",
     "requiredDesc": "وصف المشكلة مطلوب",
     "minLengthDesc": "يجب أن يكون الوصف 10 أحرف على الأقل",
-    "maxLengthDesc": "لا يمكن أن يتجاوز الوصف 1000 حرف",
+    "maxLengthDesc": "لا يمكن أن يتجاوز الوصف 5000 حرف",
     "invalidStatus": "حالة غير صالحة",
     "requiredUsername": "اسم المستخدم مطلوب",
     "requiredPassword": "كلمة المرور مطلوبة"

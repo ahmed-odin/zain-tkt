@@ -11,10 +11,6 @@ export function useTickets() {
     return ticketStore.updateTicket(id, updates, currentUser);
   };
 
-  const deleteTicket = (id) => {
-    return ticketStore.deleteTicket(id);
-  };
-
   const getTicket = (id) => {
     return ticketStore.getTicketById(id);
   };
@@ -38,7 +34,6 @@ export function useTickets() {
   return {
     createTicket,
     updateTicket,
-    deleteTicket,
     getTicket,
     getAllTickets,
     searchAndFilter,

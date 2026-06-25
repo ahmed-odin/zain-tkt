@@ -122,7 +122,7 @@ const handleLogin = async () => {
   isLoading.value = false;
 
   if (success) {
-    router.push('/');
+    router.push('/pending');
   } else {
     loginError.value = t('login.invalidCreds');
   }

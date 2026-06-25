@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from './stores/authStore';
+import AppLayout from './components/AppLayout.vue';
 
 const routes = [
   {
@@ -10,31 +11,33 @@ const routes = [
   },
   {
     path: '/',
-    name: 'Dashboard',
-    component: () => import('./views/DashboardView.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/create',
-    name: 'CreateTicket',
-    component: () => import('./views/CreateTicketPage.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/pending',
-    name: 'PendingTickets',
-    component: () => import('./views/PendingTicketsPage.vue'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/completed',
-    name: 'CompletedTickets',
-    component: () => import('./views/CompletedTicketsPage.vue'),
-    meta: { requiresAuth: true }
+    component: AppLayout,
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        redirect: '/pending'
+      },
+      {
+        path: 'create',
+        name: 'CreateTicket',
+        component: () => import('./views/CreateTicketPage.vue')
+      },
+      {
+        path: 'pending',
+        name: 'PendingTickets',
+        component: () => import('./views/PendingTicketsPage.vue')
+      },
+      {
+        path: 'completed',
+        name: 'CompletedTickets',
+        component: () => import('./views/CompletedTicketsPage.vue')
+      }
+    ]
   },
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/'
+    redirect: '/pending'
   }
 ];
 
@@ -43,19 +46,19 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard to check authentication
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
-  // Initialize auth on first load
   if (!authStore.isAuthenticated && !from.name) {
     authStore.initializeAuth();
   }
 
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if (requiresAuth && !authStore.isAuthenticated) {
     next('/login');
   } else if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/');
+    next('/pending');
   } else {
     next();
   }
