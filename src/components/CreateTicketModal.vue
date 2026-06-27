@@ -100,12 +100,17 @@
           </select>
         </div>
 
+        <!-- Submission error -->
+        <div v-if="submissionError" class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {{ submissionError }}
+        </div>
+
         <!-- Actions -->
         <div class="flex gap-2 mt-2">
           <button
             type="submit"
             :disabled="isSubmitting || !isFormValid"
-            class="flex-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
+            class="flex-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors disabled:cursor-not-allowed disabled:opacity-60"
           >
             <span v-if="!isSubmitting">{{ $t('common.create') }}</span>
             <span v-else>{{ $t('modal.buttons.creating') }}</span>
@@ -147,6 +152,7 @@ const form = ref({
 
 const errors = ref({});
 const isSubmitting = ref(false);
+const submissionError = ref('');
 
 const governorates = [
   'بغداد', 'البصرة', 'الموصل', 'كركوك',
@@ -175,6 +181,7 @@ onUnmounted(() => {
 
 const handleSubmit = async () => {
   errors.value = {};
+  submissionError.value = '';
   const validationErrors = validateTicketForm(form.value);
   if (Object.keys(validationErrors).length > 0) {
     errors.value = validationErrors;
@@ -182,9 +189,14 @@ const handleSubmit = async () => {
   }
 
   isSubmitting.value = true;
-  await new Promise(resolve => setTimeout(resolve, 300));
-  ticketStore.addTicket(form.value, authStore.currentUser);
+  const ticket = await ticketStore.createTicket(form.value);
   isSubmitting.value = false;
+
+  if (!ticket) {
+    submissionError.value = ticketStore.error || 'Unable to create ticket';
+    return;
+  }
+
   setTimeout(() => emit('created'), 300);
 };
 

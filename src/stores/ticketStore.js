@@ -1,166 +1,178 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import { getCurrentDateTime } from '../utils/dateFormatter';
+import api from '../services/api';
+
+const mapTicket = (ticket) => ({
+  id: ticket.id,
+  ticketId: ticket.ticket_id,
+  missdn: ticket.missdn,
+  governorate: ticket.governorate,
+  comments: ticket.comments || '',
+  problemDescription: ticket.alwaseet_company || '',
+  status: ticket.status,
+  createdBy: ticket.creator?.name || ticket.creator?.email || 'Unknown',
+  completedBy: ticket.completer?.name || ticket.completer?.email || ticket.completed_by || '—',
+  createdAt: ticket.created_at,
+  updatedAt: ticket.updated_at,
+  completedAt: ticket.completed_at,
+});
 
 export const useTicketStore = defineStore('ticket', () => {
   const tickets = ref([]);
-  const currentEditingTicket = ref(null);
+  const loading = ref(false);
+  const error = ref(null);
 
-  // Initialize tickets from localStorage
-  const initializeTickets = () => {
-    const stored = localStorage.getItem('tickets');
-    if (stored) {
-      try {
-        tickets.value = JSON.parse(stored);
-      } catch {
-        tickets.value = [];
-      }
+  const setTickets = (data) => {
+    tickets.value = data.map(mapTicket);
+  };
+
+  const fetchPendingTickets = async (params = {}) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await api.get('/tickets/pending', { params });
+      setTickets(response.data.tickets);
+      return response.data.tickets;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to load pending tickets';
+      return [];
+    } finally {
+      loading.value = false;
     }
   };
 
-  // Save tickets to localStorage
-  const saveToLocalStorage = () => {
-    localStorage.setItem('tickets', JSON.stringify(tickets.value));
-    // Update next ticket ID
-    const maxId = tickets.value.length > 0 
-      ? Math.max(...tickets.value.map(t => t.id))
-      : 0;
-    localStorage.setItem('nextTicketId', JSON.stringify(maxId + 1));
-  };
+  const fetchCompletedTickets = async (params = {}) => {
+    loading.value = true;
+    error.value = null;
 
-  // Get next ticket ID
-  const getNextId = () => {
-    let nextId = 1;
-    if (tickets.value.length > 0) {
-      nextId = Math.max(...tickets.value.map(t => t.id)) + 1;
+    try {
+      const response = await api.get('/tickets/completed', { params });
+      setTickets(response.data.tickets);
+      return response.data.tickets;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to load completed tickets';
+      return [];
+    } finally {
+      loading.value = false;
     }
-    return nextId;
   };
 
-  // Add a new ticket
-  const addTicket = (ticketData, creator) => {
-    const newTicket = {
-      id: getNextId(),
-      missdn: ticketData.missdn,
-      problemDescription: ticketData.problemDescription || '',
-      governorate: ticketData.governorate,
-      comments: ticketData.comments,
-      status: ticketData.status || 'Pending',
-      createdBy: creator,
-      completedBy: null,
-      createdAt: getCurrentDateTime(),
-      updatedAt: getCurrentDateTime(),
-      completedAt: null
-    };
-    
-    tickets.value.push(newTicket);
-    saveToLocalStorage();
-    return newTicket;
-  };
+  const createTicket = async (ticketData) => {
+    loading.value = true;
+    error.value = null;
 
-  // Update an existing ticket
-  const updateTicket = (id, updates, currentUser) => {
-    const ticket = tickets.value.find(t => t.id === id);
-    if (!ticket) return null;
-
-    // Update fields
-    if (updates.missdn !== undefined) ticket.missdn = updates.missdn;
-    if (updates.problemDescription !== undefined) ticket.problemDescription = updates.problemDescription;
-    if (updates.governorate !== undefined) ticket.governorate = updates.governorate;
-    if (updates.comments !== undefined) ticket.comments = updates.comments;
-    
-    // If status is being changed to Complete, set completedBy and completedAt
-    if (updates.status === 'Complete' && ticket.status !== 'Complete') {
-      ticket.completedBy = currentUser;
-      ticket.completedAt = getCurrentDateTime();
+    try {
+      const payload = {
+        missdn: ticketData.missdn,
+        governorate: ticketData.governorate,
+        comments: ticketData.comments,
+        status: ticketData.status || 'Pending',
+      };
+      const response = await api.post('/tickets', payload);
+      const ticket = mapTicket(response.data.ticket);
+      tickets.value.unshift(ticket);
+      return ticket;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to create ticket';
+      return null;
+    } finally {
+      loading.value = false;
     }
-    // If status changes away from Complete, clear completedBy
-    if (updates.status !== 'Complete' && ticket.status === 'Complete') {
-      ticket.completedBy = null;
-      ticket.completedAt = null;
+  };
+
+  const updateTicket = async (id, updates) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const payload = {
+        missdn: updates.missdn,
+        governorate: updates.governorate,
+        comments: updates.comments,
+        status: updates.status,
+        alwaseet_company: updates.problemDescription,
+      };
+      const response = await api.put(`/tickets/${id}`, payload);
+      const updatedTicket = mapTicket(response.data.ticket);
+      tickets.value = tickets.value.map((ticket) => ticket.id === id ? updatedTicket : ticket);
+      return updatedTicket;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to update ticket';
+      return null;
+    } finally {
+      loading.value = false;
     }
-    
-    if (updates.status !== undefined) ticket.status = updates.status;
-    ticket.updatedAt = getCurrentDateTime();
-
-    saveToLocalStorage();
-    return ticket;
   };
 
-  // Update status helper
-  const updateStatus = (id, status, user = null) => {
-    return updateTicket(id, { status }, user);
+  const markComplete = async (id, alwaseetCompany) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await api.post(`/tickets/${id}/complete`, {
+        alwaseet_company: alwaseetCompany,
+      });
+      const completedTicket = mapTicket(response.data.ticket);
+      tickets.value = tickets.value.filter((ticket) => ticket.id !== id);
+      return completedTicket;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to complete ticket';
+      return null;
+    } finally {
+      loading.value = false;
+    }
   };
 
-  // Get ticket by ID
   const getTicketById = (id) => {
-    return tickets.value.find(t => t.id === id);
+    return tickets.value.find((ticket) => ticket.id === id);
   };
 
-  // Search and filter tickets
-  const searchTickets = (query = '', filters = {}) => {
-    let results = [...tickets.value];
-
-    // Search by MISSDN (case-insensitive)
-    if (query && query.trim()) {
-      const searchLower = query.toLowerCase();
-      results = results.filter(t => 
-        t.missdn.toLowerCase().includes(searchLower)
+  const searchTickets = (query = '') => {
+    const lower = query.trim().toLowerCase();
+    if (!lower) {
+      return tickets.value;
+    }
+    return tickets.value.filter((ticket) => {
+      return (
+        ticket.missdn.toLowerCase().includes(lower) ||
+        ticket.governorate.toLowerCase().includes(lower) ||
+        ticket.comments.toLowerCase().includes(lower) ||
+        ticket.problemDescription.toLowerCase().includes(lower)
       );
-    }
-
-    // Filter by status
-    if (filters.status && filters.status !== 'all') {
-      results = results.filter(t => t.status === filters.status);
-    }
-
-    // Filter by governorate
-    if (filters.governorate && filters.governorate !== 'all') {
-      results = results.filter(t => t.governorate === filters.governorate);
-    }
-
-    return results;
+    });
   };
 
-  // Get ticket statistics
-  const getTicketStats = () => {
-    return {
-      total: tickets.value.length,
-      pending: tickets.value.filter(t => t.status === 'Pending').length,
-      complete: tickets.value.filter(t => t.status === 'Complete').length
-    };
-  };
+  const getTicketStats = () => ({
+    total: tickets.value.length,
+    pending: tickets.value.filter((t) => t.status === 'Pending').length,
+    complete: tickets.value.filter((t) => t.status === 'Complete').length,
+  });
 
-  // Get governorate counts
   const getGovernorateStats = () => {
     const stats = {};
-    tickets.value.forEach(t => {
-      stats[t.governorate] = (stats[t.governorate] || 0) + 1;
+    tickets.value.forEach((ticket) => {
+      stats[ticket.governorate] = (stats[ticket.governorate] || 0) + 1;
     });
     return stats;
   };
 
-  // Computed getters
   const allTickets = computed(() => tickets.value);
-  const filteredTickets = computed(() => (query = '', filters = {}) => {
-    return searchTickets(query, filters);
-  });
   const ticketStats = computed(() => getTicketStats());
 
   return {
     tickets,
-    currentEditingTicket,
+    loading,
+    error,
     allTickets,
-    filteredTickets,
     ticketStats,
-    initializeTickets,
-    addTicket,
+    fetchPendingTickets,
+    fetchCompletedTickets,
+    createTicket,
     updateTicket,
+    markComplete,
     getTicketById,
     searchTickets,
-    getTicketStats,
     getGovernorateStats,
-    updateStatus,
-    getNextId
   };
 });

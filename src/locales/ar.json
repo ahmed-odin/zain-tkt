@@ -135,6 +135,8 @@
   "login": {
     "title": "إدارة التذاكر",
     "subtitle": "تسجيل الدخول إلى حسابك",
+    "identifier": "اسم المستخدم أو البريد الإلكتروني",
+    "identifierPlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني",
     "username": "اسم المستخدم",
     "usernamePlaceholder": "أدخل اسم المستخدم",
     "password": "كلمة المرور",

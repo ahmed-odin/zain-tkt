@@ -46,7 +46,7 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
 
   if (!authStore.isAuthenticated && !from.name) {
@@ -56,12 +56,14 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !authStore.isAuthenticated) {
-    next('/login');
-  } else if (to.path === '/login' && authStore.isAuthenticated) {
-    next('/pending');
-  } else {
-    next();
+    return next('/login');
   }
+
+  if (to.path === '/login' && authStore.isAuthenticated) {
+    return next('/pending');
+  }
+
+  return next();
 });
 
 export default router;

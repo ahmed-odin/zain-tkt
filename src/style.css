@@ -11,7 +11,12 @@ html {
 }
 
 body {
-  @apply bg-bg-secondary;
+  @apply bg-bg-secondary text-text-primary;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
 }
 
 /* Custom scrollbar */

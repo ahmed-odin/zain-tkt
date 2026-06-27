@@ -135,6 +135,8 @@
   "login": {
     "title": "Ticket Management",
     "subtitle": "Sign in to your account",
+    "identifier": "Username or Email",
+    "identifierPlaceholder": "Enter your username or email",
     "username": "Username",
     "usernamePlaceholder": "Enter your username",
     "password": "Password",

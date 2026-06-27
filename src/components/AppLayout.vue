@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-bg-secondary">
+  <div class="min-h-screen bg-bg-secondary text-text-primary">
     <Navbar @toggle-sidebar="sidebarOpen = !sidebarOpen" />
     <Sidebar :open="sidebarOpen" @close="sidebarOpen = false" />
     <main
-      class="pt-16 min-h-screen transition-all duration-300 md:ml-14 lg:ml-64 rtl:md:mr-14 rtl:md:ml-0 rtl:lg:mr-64"
+      class="min-h-screen overflow-x-hidden pt-16 transition-all duration-300 md:ml-14 lg:ml-64 rtl:md:mr-14 rtl:md:ml-0 rtl:lg:mr-64"
     >
-      <div class="p-4 sm:p-6">
+      <div class="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
         <router-view v-slot="{ Component }">
           <Transition name="page" mode="out-in">
             <component :is="Component" />
@@ -26,7 +26,7 @@ const sidebarOpen = ref(false);
 const ticketStore = useTicketStore();
 
 onMounted(() => {
-  ticketStore.initializeTickets();
+  ticketStore.fetchPendingTickets();
 });
 </script>
 

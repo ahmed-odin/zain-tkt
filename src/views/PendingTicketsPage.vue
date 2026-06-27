@@ -1,40 +1,40 @@
 <template>
   <div>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <h2 class="text-h2 font-bold">{{ $t('pages.pendingTitle') }} ({{ pending.length }})</h2>
-      <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+      <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
         <div class="relative w-full sm:w-72">
           <input
             v-model="query"
             :placeholder="$t('common.search')"
-            class="w-full px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:border-blue-400 pl-10 rtl:pl-2 rtl:pr-10"
+            class="w-full rounded-xl border border-gray-200 py-2 pl-10 pr-3 text-sm focus:border-blue-400 focus:outline-none rtl:pl-3 rtl:pr-10"
           />
-          <svg class="w-4 h-4 text-gray-400 absolute left-2.5 rtl:left-auto rtl:right-2.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 rtl:left-auto rtl:right-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
         </div>
         <button
           type="button"
           @click="showImportModal = true"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
         >
           📤 {{ $t('actions.importExcel') }}
         </button>
       </div>
     </div>
 
-    <div v-if="actionError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+    <div v-if="actionError" class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
       {{ actionError }}
     </div>
-    <div v-if="importStatus" class="mb-4 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-700">
+    <div v-if="importStatus" class="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
       {{ importStatus }}
     </div>
-    <div v-if="filtered.length === 0" class="text-center py-12 bg-white rounded-card border border-gray-200">
+    <div v-if="filtered.length === 0" class="rounded-card border border-gray-200 bg-white py-12 text-center">
       <p class="text-text-secondary">{{ $t('dashboard.empty.title') }}</p>
     </div>
 
-    <div v-else class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-      <table class="w-full text-sm" dir="rtl">
+    <div v-else class="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <table class="min-w-[920px] w-full text-sm" dir="rtl">
         <thead class="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-200">
           <tr>
             <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">الإجراءات</th>
@@ -103,17 +103,17 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useTicketStore } from '../stores/ticketStore';
-import { useAuthStore } from '../stores/authStore';
 import { formatDateTime } from '../utils/dateFormatter';
+import { useI18n } from 'vue-i18n';
 import EditTicketModal from '../components/EditTicketModal.vue';
 import TicketDetailsModal from '../components/TicketDetailsModal.vue';
 import ImportExcelModal from '../components/ImportExcelModal.vue';
 
 const query = ref('');
 const ticketStore = useTicketStore();
-const authStore = useAuthStore();
+const { t } = useI18n();
 
 const pending = computed(() => ticketStore.tickets.filter(t => t.status === 'Pending'));
 
@@ -134,25 +134,34 @@ const showImportModal = ref(false);
 const importStatus = ref('');
 const actionError = ref('');
 
+onMounted(async () => {
+  await ticketStore.fetchPendingTickets();
+});
+
 const openDetails = (t) => { viewing.value = { ...t }; };
 const openEdit = (t) => { editing.value = { ...t }; };
 const editFromDetails = (t) => { viewing.value = null; editing.value = { ...t }; };
 const handleImport = (tickets) => {
-  tickets.forEach(ticket => ticketStore.addTicket(ticket, authStore.currentUser));
-  importStatus.value = $t('excel.importSuccess', { count: tickets.length });
+  tickets.forEach(ticket => ticketStore.createTicket(ticket));
+  importStatus.value = t('excel.importSuccess', { count: tickets.length });
   showImportModal.value = false;
   setTimeout(() => { importStatus.value = ''; }, 4500);
 };
-const markComplete = (id) => {
+const markComplete = async (id) => {
   const ticket = ticketStore.getTicketById(id);
   if (!ticket) return;
 
   if (!ticket.problemDescription || !ticket.problemDescription.trim()) {
-    actionError.value = $t('validation.requiredAlwaseetCompany');
+    actionError.value = t('validation.requiredAlwaseetCompany');
     return;
   }
 
-  ticketStore.updateStatus(id, 'Complete', authStore.currentUser);
+  const completed = await ticketStore.markComplete(id, ticket.problemDescription);
+  if (!completed) {
+    actionError.value = ticketStore.error || t('ticket.completeError');
+  } else {
+    actionError.value = '';
+  }
 };
 const closeEdit = () => { editing.value = null; };
 </script>

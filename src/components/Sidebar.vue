@@ -2,36 +2,36 @@
   <!-- Mobile overlay -->
   <div
     v-if="open"
-    class="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+    class="fixed inset-0 z-30 bg-slate-900/40 md:hidden"
     @click="emit('close')"
   ></div>
 
   <aside
     :class="[
-      'fixed top-16 h-[calc(100vh-64px)] bg-white border-r-2 rtl:border-r-0 rtl:border-l-2 border-gray-200 shadow-md z-40 transition-all duration-300',
+      'fixed top-16 z-40 h-[calc(100vh-64px)] overflow-y-auto border-r border-gray-200 bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300 rtl:border-r-0 rtl:border-l',
       'left-0 rtl:left-auto rtl:right-0',
       open ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full',
       'md:translate-x-0 rtl:md:translate-x-0',
       'w-64 md:w-14 lg:w-64'
     ]"
   >
-    <nav class="flex flex-col py-3 h-full">
+    <nav class="flex h-full flex-col gap-1 py-3">
       <router-link
         v-for="item in navItems"
         :key="item.to"
         :to="item.to"
         @click="emit('close')"
         :class="[
-          'flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200',
+          'mx-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
           'md:justify-center md:px-2 lg:justify-start lg:px-4',
           isActive(item.routeName)
-            ? 'bg-primary text-white'
-            : 'text-text-primary hover:bg-bg-secondary'
+            ? 'bg-primary text-white shadow-sm'
+            : 'text-text-primary hover:bg-bg-secondary hover:text-primary'
         ]"
         :title="item.label"
       >
-        <component :is="item.icon" class="w-5 h-5 flex-shrink-0" />
-        <span class="font-medium text-sm md:hidden lg:inline">{{ item.label }}</span>
+        <component :is="item.icon" class="h-5 w-5 flex-shrink-0" />
+        <span class="text-sm font-medium md:hidden lg:inline">{{ item.label }}</span>
       </router-link>
     </nav>
   </aside>

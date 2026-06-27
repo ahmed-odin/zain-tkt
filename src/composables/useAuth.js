@@ -3,12 +3,12 @@ import { useAuthStore } from '../stores/authStore';
 export function useAuth() {
   const authStore = useAuthStore();
 
-  const login = (username, password) => {
-    return authStore.login(username, password);
+  const login = async (email, password) => {
+    return authStore.login(email, password);
   };
 
-  const logout = () => {
-    authStore.logout();
+  const logout = async () => {
+    await authStore.logout();
   };
 
   const isLoggedIn = () => {

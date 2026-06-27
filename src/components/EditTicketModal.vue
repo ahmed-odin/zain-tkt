@@ -151,6 +151,7 @@ const form = ref({
 
 const errors = ref({});
 const isSubmitting = ref(false);
+const submitError = ref('');
 
 const governorates = [
   'بغداد', 'البصرة', 'الموصل', 'كركوك',
@@ -173,6 +174,7 @@ onMounted(() => {
 
 const handleSubmit = async () => {
   errors.value = {};
+  submitError.value = '';
   const validationErrors = validateTicketForm(form.value);
   if (Object.keys(validationErrors).length > 0) {
     errors.value = validationErrors;
@@ -180,9 +182,14 @@ const handleSubmit = async () => {
   }
 
   isSubmitting.value = true;
-  await new Promise(resolve => setTimeout(resolve, 300));
-  ticketStore.updateTicket(props.ticket.id, form.value, authStore.currentUser);
+  const result = await ticketStore.updateTicket(props.ticket.id, form.value);
   isSubmitting.value = false;
+
+  if (!result) {
+    submitError.value = ticketStore.error || 'Unable to update ticket';
+    return;
+  }
+
   setTimeout(() => emit('updated'), 300);
 };
 
