@@ -27,6 +27,27 @@ export function getCurrentDateTime() {
 }
 
 /**
+ * Convert a local calendar date (YYYY-MM-DD) to the UTC ISO timestamp of the
+ * START of that local day, so server-side date filters match what the user
+ * sees regardless of timezone.
+ */
+export function localDayStartUtc(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(`${dateStr}T00:00:00`);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/**
+ * Convert a local calendar date (YYYY-MM-DD) to the UTC ISO timestamp of the
+ * END of that local day.
+ */
+export function localDayEndUtc(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(`${dateStr}T23:59:59.999`);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+/**
  * Truncate string to max length
  */
 export function truncateString(str, maxLength) {

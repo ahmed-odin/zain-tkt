@@ -26,23 +26,26 @@
       <div class="flex items-center gap-2 sm:gap-3">
         <button
           @click="toggleLanguage"
-          class="flex h-8 items-center justify-center rounded-lg border-2 border-blue-500 px-2.5 text-xs font-medium transition-all duration-200 hover:bg-blue-50"
+          class="flex h-9 items-center justify-center rounded-lg border border-border px-3 text-xs font-medium text-text-secondary transition-colors hover:border-primary hover:text-primary"
         >
-          <span>{{ locale === 'en' ? '🇬🇧 EN' : '🇸🇦 AR' }}</span>
+          <span>{{ locale === 'en' ? 'EN' : 'AR' }}</span>
         </button>
 
-        <div class="hidden min-w-0 text-right sm:block rtl:text-left">
-          <p class="truncate text-sm font-medium text-text-primary">{{ currentUsername }}</p>
-          <p class="truncate text-xs text-text-secondary">{{ $t('nav.admin') }}</p>
+        <div class="flex items-center gap-2.5">
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-bg-tertiary text-sm font-semibold text-primary">
+            {{ userInitials }}
+          </div>
+          <div class="hidden min-w-0 text-right sm:block rtl:text-left">
+            <p class="truncate text-sm font-medium leading-tight text-text-primary">{{ currentUsername }}</p>
+            <p class="truncate text-xs text-text-secondary">{{ roleLabel }}</p>
+          </div>
         </div>
         <div class="hidden h-7 w-px bg-border sm:block"></div>
         <button
           @click="handleLogout"
-          class="flex items-center gap-1.5 rounded-btn px-3 py-1.5 text-sm text-text-primary transition-all duration-base hover:bg-bg-secondary"
+          class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-text-secondary transition-colors hover:bg-bg-secondary hover:text-danger"
         >
-          <svg class="h-4 w-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-          </svg>
+          <Icon icon="lucide:log-out" class="h-4 w-4 rtl:rotate-180" />
           <span class="hidden sm:inline">{{ $t('nav.logout') }}</span>
         </button>
       </div>
@@ -52,6 +55,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { Icon } from '@iconify/vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useI18n } from 'vue-i18n';
@@ -60,12 +64,19 @@ const emit = defineEmits(['toggle-sidebar']);
 
 const router = useRouter();
 const authStore = useAuthStore();
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const currentUsername = computed(() => authStore.username || authStore.currentUser?.name || authStore.currentUser?.email || '');
+const roleLabel = computed(() => authStore.role ? t(`nav.roles.${authStore.role}`) : t('nav.admin'));
+const userInitials = computed(() => {
+  const name = currentUsername.value.trim();
+  if (!name) return '?';
+  const parts = name.split(/\s+/);
+  return (parts[0][0] + (parts[1]?.[0] || '')).toUpperCase();
+});
 
-const handleLogout = () => {
-  authStore.logout();
+const handleLogout = async () => {
+  await authStore.logout();
   router.push('/login');
 };
 

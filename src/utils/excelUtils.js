@@ -148,62 +148,22 @@ function normalizeGovernorate(value) {
   return GOVERNORATE_ALIASES[key] || raw;
 }
 
-function normalizeDataRow(row) {
-  const normalized = row.map(normalizeValue);
-
-  while (normalized.length > 4 && normalized[0] === '') {
-    normalized.shift();
-  }
-
-  const firstValue = normalized[0] ? String(normalized[0]).replace(/\D/g, '') : '';
-  const secondValue = normalized[1] ? String(normalized[1]).replace(/\D/g, '') : '';
-  if (!/^\d{10}$/.test(firstValue) && /^\d{10}$/.test(secondValue)) {
-    normalized.shift();
-  }
-
-  while (normalized.length < 4) {
-    normalized.push('');
-  }
-  return normalized;
+function isKnownGovernorate(value) {
+  const key = normalizeValue(value).toLowerCase();
+  return Object.prototype.hasOwnProperty.call(GOVERNORATE_ALIASES, key);
 }
 
-function buildRowObject(row, headerMap, hasHeader) {
-  const normalized = normalizeDataRow(row);
-  const result = {
-    missdn: '',
-    governorate: '',
-    comments: '',
-    notes: '',
-    allowMissingGovernorate: false
+// Build a ticket row from explicitly resolved column indexes (works regardless
+// of column order — LTR or RTL sheets).
+function buildRowObject(row, cols) {
+  const normalized = row.map(normalizeValue);
+  return {
+    missdn: cols.missdn !== undefined ? (normalized[cols.missdn] || '') : '',
+    governorate: cols.governorate !== undefined ? (normalized[cols.governorate] || '') : '',
+    comments: cols.comments !== undefined ? (normalized[cols.comments] || '') : '',
+    notes: cols.notes !== undefined ? (normalized[cols.notes] || '') : '',
+    allowMissingGovernorate: cols.governorate === undefined
   };
-
-  if (hasHeader) {
-    if (headerMap.missdn !== undefined) result.missdn = normalized[headerMap.missdn] || '';
-    if (headerMap.governorate !== undefined) result.governorate = normalized[headerMap.governorate] || '';
-    if (headerMap.comments !== undefined) result.comments = normalized[headerMap.comments] || '';
-    if (headerMap.notes !== undefined) result.notes = normalized[headerMap.notes] || '';
-  } else {
-    result.missdn = normalized[0] || '';
-
-    const possibleGovernorate = normalizeGovernorate(normalized[1]);
-    const nextGovernorate = normalizeGovernorate(normalized[2]);
-
-    if (possibleGovernorate) {
-      result.governorate = normalized[1];
-      result.comments = normalized[2] || '';
-      result.notes = normalized[3] || '';
-    } else if (nextGovernorate) {
-      result.comments = normalized[1] || '';
-      result.governorate = normalized[2];
-      result.notes = normalized[3] || '';
-    } else {
-      result.comments = normalized[1] || '';
-      result.notes = normalized[2] || '';
-      result.allowMissingGovernorate = true;
-    }
-  }
-
-  return result;
 }
 
 function buildHeaderMap(headerRow) {
@@ -217,10 +177,6 @@ function buildHeaderMap(headerRow) {
   return map;
 }
 
-function getDefaultIndex(index, fallback) {
-  return index !== undefined ? index : fallback;
-}
-
 function isRowEmpty(row) {
   return row.every((cell) => normalizeValue(cell) === '');
 }
@@ -232,57 +188,73 @@ function isValidMissdnCell(value) {
     || /^(?:00964|964)\d{10}$/.test(digits);
 }
 
-function isPossibleGovernorateCell(value) {
-  const normalized = normalizeValue(value);
-  if (!normalized) return false;
-  return Boolean(normalizeGovernorate(normalized));
-}
+/**
+ * Resolve which column holds the MISSDN / governorate / comments by scanning
+ * the data — so the import works whether columns are ordered left-to-right
+ * (MISSDN first) or right-to-left (governorate first), with or without headers.
+ * Header-provided indexes always take priority.
+ */
+function resolveColumns(dataRows, headerMap) {
+  const cols = { ...headerMap };
+  const rows = dataRows.filter((r) => Array.isArray(r) && !isRowEmpty(r)).slice(0, 50);
 
-function inferColumnIndexes(rows, headerMap) {
-  const columns = { ...headerMap };
-  const missdnCounts = [];
-  const governorateCounts = [];
-
-  const rowsToCheck = rows.slice(0, 10);
   let maxCols = 0;
+  rows.forEach((r) => { maxCols = Math.max(maxCols, r.length); });
 
-  rowsToCheck.forEach((row) => {
-    if (!Array.isArray(row)) return;
-    maxCols = Math.max(maxCols, row.length);
-  });
-
+  const stats = [];
   for (let i = 0; i < maxCols; i += 1) {
-    missdnCounts[i] = 0;
-    governorateCounts[i] = 0;
+    stats[i] = { phone: 0, filled: 0, length: 0, known: 0 };
   }
 
-  rowsToCheck.forEach((row) => {
-    if (!Array.isArray(row)) return;
-    row.forEach((cell, index) => {
-      if (isValidMissdnCell(cell)) {
-        missdnCounts[index] += 1;
-      }
-      if (isPossibleGovernorateCell(cell)) {
-        governorateCounts[index] += 1;
-      }
-    });
+  rows.forEach((r) => {
+    for (let i = 0; i < maxCols; i += 1) {
+      const v = normalizeValue(r[i]);
+      if (!v) continue;
+      stats[i].filled += 1;
+      stats[i].length += v.length;
+      if (isValidMissdnCell(v)) stats[i].phone += 1;
+      if (isKnownGovernorate(v)) stats[i].known += 1;
+    }
   });
 
-  if (columns.missdn === undefined) {
-    const maxMissdn = Math.max(...missdnCounts, 0);
-    if (maxMissdn > 0) {
-      columns.missdn = missdnCounts.indexOf(maxMissdn);
+  const avgLen = (s) => (s.filled ? s.length / s.filled : 0);
+
+  // MISSDN: the column with the most phone-like values.
+  if (cols.missdn === undefined) {
+    let best = -1;
+    let bestCount = 0;
+    stats.forEach((s, i) => { if (s.phone > bestCount) { bestCount = s.phone; best = i; } });
+    if (best >= 0) cols.missdn = best;
+  }
+
+  // Governorate: prefer the column with the most recognized governorate names;
+  // otherwise the shortest-text column (governorate names are short, comments are long).
+  if (cols.governorate === undefined) {
+    const candidates = stats
+      .map((s, i) => ({ i, ...s }))
+      .filter((c) => c.i !== cols.missdn && c.i !== cols.comments && c.filled > 0);
+
+    const known = candidates.filter((c) => c.known > 0).sort((a, b) => b.known - a.known);
+    if (known.length) {
+      cols.governorate = known[0].i;
+    } else if (candidates.length) {
+      candidates.sort((a, b) => avgLen(a) - avgLen(b));
+      cols.governorate = candidates[0].i;
     }
   }
 
-  if (columns.governorate === undefined) {
-    const maxGov = Math.max(...governorateCounts, 0);
-    if (maxGov > 0) {
-      columns.governorate = governorateCounts.indexOf(maxGov);
+  // Comments: the remaining filled column with the longest text.
+  if (cols.comments === undefined) {
+    const candidates = stats
+      .map((s, i) => ({ i, ...s }))
+      .filter((c) => c.i !== cols.missdn && c.i !== cols.governorate && c.filled > 0);
+    if (candidates.length) {
+      candidates.sort((a, b) => avgLen(b) - avgLen(a));
+      cols.comments = candidates[0].i;
     }
   }
 
-  return columns;
+  return cols;
 }
 
 function validateImportRow(ticket, rowIndex) {
@@ -363,9 +335,9 @@ export async function parsePendingTicketsExcel(file) {
   const headerRowIndex = findHeaderRow(rawRows);
   const hasHeader = headerRowIndex !== null;
   const headerRow = hasHeader ? rawRows[headerRowIndex] : [];
-  let headerMap = hasHeader ? buildHeaderMap(headerRow) : {};
+  const headerMap = hasHeader ? buildHeaderMap(headerRow) : {};
   const dataRows = hasHeader ? rawRows.slice(headerRowIndex + 1) : rawRows;
-  headerMap = inferColumnIndexes(dataRows, headerMap);
+  const cols = resolveColumns(dataRows, headerMap);
 
   const result = {
     totalRows: 0,
@@ -375,13 +347,8 @@ export async function parsePendingTicketsExcel(file) {
     validTickets: []
   };
 
-  if (hasHeader && (headerMap.missdn === undefined || headerMap.governorate === undefined)) {
-    if (headerMap.missdn === undefined) {
-      result.errors.push({ message: 'MISSDN column not found in the file.' });
-    }
-    if (headerMap.governorate === undefined) {
-      result.errors.push({ message: 'Governorate column not found in the file.' });
-    }
+  if (cols.missdn === undefined) {
+    result.errors.push({ message: 'MISSDN column not found in the file.' });
     return result;
   }
 
@@ -391,7 +358,7 @@ export async function parsePendingTicketsExcel(file) {
     }
 
     const excelRowIndex = headerRowIndex !== null ? headerRowIndex + index + 2 : index + 1;
-    const ticketRow = buildRowObject(row, headerMap, hasHeader);
+    const ticketRow = buildRowObject(row, cols);
     const validation = validateImportRow(ticketRow, excelRowIndex);
 
     result.totalRows += 1;

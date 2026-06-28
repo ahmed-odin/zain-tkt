@@ -14,13 +14,31 @@
     "searchPlaceholder": "البحث عن التذاكر بـ MISSDN...",
     "resetFilters": "إعادة تعيين الفلاتر",
     "filterByStatus": "تصفية حسب الحالة",
-    "filterByGovernorate": "تصفية حسب المحافظة"
+    "filterByGovernorate": "تصفية حسب المحافظة",
+    "filterByUser": "تصفية حسب المستخدم",
+    "filterByUsername": "تصفية حسب اسم المستخدم",
+    "usernamePlaceholder": "ابحث عن اسم المستخدم...",
+    "noResults": "لا توجد نتائج",
+    "allUsers": "كل المستخدمين",
+    "dateFrom": "من",
+    "dateTo": "إلى"
+  },
+  "pagination": {
+    "showing": "عرض {from}–{to} من {total}",
+    "perPage": "لكل صفحة",
+    "prev": "السابق",
+    "next": "التالي"
   },
   "nav": {
     "title": "نظام التذاكر",
     "subtitle": "الإدارة",
     "logout": "تسجيل خروج",
-    "admin": "مسؤول"
+    "admin": "مسؤول",
+    "roles": {
+      "super_admin": "مدير عام",
+      "user": "مستخدم",
+      "staff": "موظف"
+    }
   },
   "dashboard": {
     "title": "نظام إدارة التذاكر",
@@ -59,7 +77,9 @@
     "id": "تذكرة #{id}",
     "status": {
       "Pending": "قيد الانتظار",
-      "Complete": "مكتملة"
+      "Complete": "مكتملة",
+      "Reopened": "أعيد فتحها",
+      "Replied": "تم الرد"
     },
     "createdBy": "تم الإنشاء بواسطة: {name}",
     "completedBy": "اكتملت بواسطة: {name}",
@@ -77,11 +97,28 @@
     "updatedAt": "تاريخ التحديث",
     "completedAt": "تاريخ الإكمال"
   },
+  "timeline": {
+    "title": "السجل الزمني",
+    "created": "أنشئت بواسطة {name}",
+    "completed": "اكتملت بواسطة {name}",
+    "reopened": "أعيد فتحها بواسطة {name}",
+    "replied": "تم الرد بواسطة {name}",
+    "edited": "عُدّل المحتوى بواسطة {name}",
+    "empty": "لا يوجد نشاط بعد"
+  },
+  "create": {
+    "subtitle": "املأ التفاصيل لفتح تذكرة جديدة"
+  },
   "modal": {
     "createTitle": "إنشاء تذكرة جديدة",
     "editTitle": "تعديل التذكرة #{id}",
+    "completeTitle": "إكمال التذكرة #{id}",
+    "completeSubtitle": "أدخل شركة الوسيط لإغلاق هذه التذكرة",
     "deleteTitle": "حذف التذكرة؟",
     "deleteConfirmMsg": "هل أنت متأكد من رغبتك في حذف التذكرة #{id}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "reopenTitle": "إعادة فتح التذكرة؟",
+    "reopenConfirmMsg": "هل أنت متأكد من رغبتك في إعادة فتح التذكرة #{id}؟ ستعود إلى قائمة قيد الانتظار.",
+    "replyTitle": "الرد على التذكرة #{id}",
     "fields": {
       "title": "MISSDN",
       "titlePlaceholder": "*******78",
@@ -92,6 +129,10 @@
       "commentsPlaceholder": "أضف أي تفاصيل إضافية",
       "intermediary": "شركة الوسيط",
       "intermediaryPlaceholder": "أدخل اسم الشركة أو التفاصيل...",
+      "reopenReason": "سبب إعادة الفتح",
+      "reopenReasonPlaceholder": "اشرح سبب إعادة فتح هذه التذكرة...",
+      "reply": "ردك",
+      "replyPlaceholder": "اكتب ردك على الموظف...",
       "initialStatus": "الحالة المبدئية",
       "status": "الحالة",
       "statusDefaultMsg": "يتم تعيين الحالة على 'قيد الانتظار' بشكل افتراضي"
@@ -108,15 +149,46 @@
     "createTab": "إنشاء تذكرة",
     "pendingTab": "قيد الانتظار",
     "completedTab": "مكتملة",
+    "usersTab": "المستخدمون",
     "completedBy": "مكتمل بواسطة"
+  },
+  "users": {
+    "title": "المستخدمون",
+    "addUser": "إضافة مستخدم",
+    "editUser": "تعديل المستخدم",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "phone": "الهاتف",
+    "role": "الدور",
+    "status": "الحالة",
+    "password": "كلمة المرور",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "changePassword": "تغيير كلمة المرور",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "activate": "تفعيل",
+    "deactivate": "إلغاء التفعيل",
+    "you": "أنت",
+    "deleteTitle": "حذف المستخدم؟",
+    "deleteConfirm": "هل أنت متأكد من حذف {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deactivateTitle": "إلغاء تفعيل المستخدم؟",
+    "deactivateConfirm": "إلغاء تفعيل {name}؟ لن يتمكن من تسجيل الدخول.",
+    "activateTitle": "تفعيل المستخدم؟",
+    "activateConfirm": "تفعيل {name}؟ سيتمكن من تسجيل الدخول مرة أخرى."
   },
   "actions": {
     "markComplete": "وضع علامة مكتملة",
     "reopen": "إعادة فتح التذكرة",
+    "reply": "رد",
     "importExcel": "استيراد من Excel"
   },
   "excel": {
     "exportButton": "تصدير إلى Excel",
+    "exportByDate": "تصدير حسب التاريخ",
+    "exportRangeTitle": "تصدير حسب نطاق التاريخ",
+    "exportRangeSubtitle": "تصدير التذاكر المكتملة التي أُنشئت ضمن نطاق تاريخ.",
+    "exportRangeRequired": "الرجاء تحديد تاريخ البداية والنهاية",
+    "exportRangeInvalid": "يجب أن يكون تاريخ البداية قبل تاريخ النهاية",
     "importTitle": "استيراد ملف Excel",
     "importDescription": "اختر ملف .xlsx أو .xls أو .ods أو .csv يحتوي على صفوف التذاكر المعلقة للاستيراد.",
     "parsingFile": "جاري قراءة الملف...",
@@ -153,6 +225,13 @@
     "requiredGov": "الرجاء اختيار المحافظة",
     "maxLengthComments": "التعليقات يجب ألا تتجاوز 500 حرف",
     "requiredAlwaseetCompany": "يجب ملء حقل شركة الوسيط قبل تحديد المهمة كمكتملة",
+    "requiredReopenReason": "الرجاء إدخال سبب إعادة الفتح",
+    "requiredReply": "الرجاء إدخال ردك",
+    "requiredName": "الاسم مطلوب",
+    "requiredEmail": "البريد الإلكتروني مطلوب",
+    "invalidEmail": "أدخل بريدًا إلكترونيًا صالحًا",
+    "minPassword": "يجب أن تكون كلمة المرور 6 أحرف على الأقل",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
     "requiredDesc": "وصف المشكلة مطلوب",
     "minLengthDesc": "يجب أن يكون الوصف 10 أحرف على الأقل",
     "maxLengthDesc": "لا يمكن أن يتجاوز الوصف 5000 حرف",

@@ -1,80 +1,97 @@
 <template>
-  <div class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 sm:p-6">
-    <div class="w-full max-w-md">
-      <!-- Logo/Header -->
-      <div class="mb-6 text-center sm:mb-8">
-        <div class="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-blue-200">
-          <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
-          </svg>
+  <div class="flex min-h-screen items-center justify-center bg-bg-secondary p-4 sm:p-6">
+    <div class="w-full max-w-sm">
+      <!-- Brand -->
+      <div class="mb-8 flex flex-col items-center text-center">
+        <div class="mb-4 flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl shadow-card">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFxIJZhBKts68cgFxhv_0r_FtAEsBl7yj0n8sTLkBpL3U8IOyU8rMOMSg&s=10"
+            alt="Ticket System Logo"
+            class="h-full w-full object-cover"
+          />
         </div>
-        <h1 class="mb-2 text-h2 font-bold text-text-primary">{{ $t('login.title') }}</h1>
-        <p class="text-body text-text-secondary">{{ $t('login.subtitle') }}</p>
+        <h1 class="text-h2 font-bold text-text-primary">{{ $t('login.title') }}</h1>
+        <p class="mt-1 text-sm text-text-secondary">{{ $t('login.subtitle') }}</p>
       </div>
 
-      <!-- Login Form -->
-      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-8">
-        <form @submit.prevent="handleLogin">
-          <!-- Username Input -->
-          <div class="mb-6">
-            <label for="username" class="block text-body font-medium text-text-primary mb-2">
+      <!-- Card -->
+      <div class="rounded-2xl border border-border bg-white p-6 shadow-card sm:p-7">
+        <form @submit.prevent="handleLogin" class="flex flex-col gap-4">
+          <!-- Identifier -->
+          <div>
+            <label for="username" class="mb-1.5 block text-sm font-medium text-text-primary">
               {{ $t('login.identifier') }}
             </label>
-            <input
-              id="username"
-              v-model="form.username"
-              type="text"
-              :placeholder="$t('login.identifierPlaceholder')"
-              class="w-full rounded-btn border border-border px-4 py-3 transition-all duration-fast focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100"
-              :class="{ 'border-danger': errors.username }"
-            />
-            <p v-if="errors.username" class="text-danger text-small mt-1">{{ $t(errors.username) }}</p>
+            <div class="relative">
+              <Icon icon="lucide:user" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-light rtl:left-auto rtl:right-3" />
+              <input
+                id="username"
+                v-model="form.username"
+                type="text"
+                autocomplete="username"
+                :placeholder="$t('login.identifierPlaceholder')"
+                class="w-full rounded-lg border border-border bg-white py-2.5 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-light focus:border-primary focus:outline-none rtl:pl-3 rtl:pr-9"
+                :class="{ 'border-danger': errors.username }"
+              />
+            </div>
+            <p v-if="errors.username" class="mt-1 text-xs text-danger">{{ $t(errors.username) }}</p>
           </div>
 
-          <!-- Password Input -->
-          <div class="mb-6">
-            <label for="password" class="block text-body font-medium text-text-primary mb-2">
+          <!-- Password -->
+          <div>
+            <label for="password" class="mb-1.5 block text-sm font-medium text-text-primary">
               {{ $t('login.password') }}
             </label>
-            <input
-              id="password"
-              v-model="form.password"
-              type="password"
-              :placeholder="$t('login.passwordPlaceholder')"
-              class="w-full rounded-btn border border-border px-4 py-3 transition-all duration-fast focus:border-primary focus:outline-none focus:ring-2 focus:ring-blue-100"
-              :class="{ 'border-danger': errors.password }"
-            />
-            <p v-if="errors.password" class="text-danger text-small mt-1">{{ $t(errors.password) }}</p>
+            <div class="relative">
+              <Icon icon="lucide:lock" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-light rtl:left-auto rtl:right-3" />
+              <input
+                id="password"
+                v-model="form.password"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                :placeholder="$t('login.passwordPlaceholder')"
+                class="w-full rounded-lg border border-border bg-white py-2.5 pl-9 pr-10 text-sm text-text-primary placeholder:text-text-light focus:border-primary focus:outline-none rtl:pl-10 rtl:pr-9"
+                :class="{ 'border-danger': errors.password }"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-light hover:text-text-secondary rtl:right-auto rtl:left-2.5"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+              >
+                <Icon :icon="showPassword ? 'lucide:eye-off' : 'lucide:eye'" class="h-4 w-4" />
+              </button>
+            </div>
+            <p v-if="errors.password" class="mt-1 text-xs text-danger">{{ $t(errors.password) }}</p>
           </div>
 
-          <!-- Error Message -->
-          <div v-if="loginError" class="mb-6 p-3 bg-red-50 border border-danger rounded-btn text-danger text-small">
+          <!-- Error -->
+          <div v-if="loginError" class="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-danger">
+            <Icon icon="lucide:alert-circle" class="h-4 w-4 flex-shrink-0" />
             {{ loginError }}
           </div>
 
-          <!-- Sign In Button -->
+          <!-- Submit -->
           <button
             type="submit"
             :disabled="isLoading"
-            class="flex w-full items-center justify-center gap-2 rounded-btn bg-primary px-4 py-3 font-medium text-white transition-all duration-base hover:bg-blue-700 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+            class="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span v-if="!isLoading">{{ $t('login.signIn') }}</span>
-            <span v-else>
-              <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              {{ $t('login.signingIn') }}
-            </span>
+            <Icon v-if="isLoading" icon="lucide:loader-2" class="h-4 w-4 animate-spin" />
+            <span>{{ isLoading ? $t('login.signingIn') : $t('login.signIn') }}</span>
           </button>
         </form>
+      </div>
 
-        <!-- Demo Credentials -->
-        <div class="mt-6 pt-6 border-t border-border">
-          <p class="text-text-secondary text-small mb-2">{{ $t('login.demo') }}</p>
-          <p class="text-text-primary text-small font-mono">Username: <span class="font-semibold">admin</span></p>
-          <p class="text-text-primary text-small font-mono">Password: <span class="font-semibold">admin</span></p>
-        </div>
+      <!-- Language toggle -->
+      <div class="mt-6 text-center">
+        <button
+          @click="toggleLanguage"
+          class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-text-secondary transition-colors hover:text-primary"
+        >
+          <Icon icon="lucide:languages" class="h-4 w-4" />
+          {{ locale === 'en' ? 'العربية' : 'English' }}
+        </button>
       </div>
     </div>
   </div>
@@ -82,6 +99,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { Icon } from '@iconify/vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '../composables/useAuth';
 import { validateCredentials } from '../utils/validators';
@@ -89,7 +107,7 @@ import { useI18n } from 'vue-i18n';
 
 const router = useRouter();
 const { login } = useAuth();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const form = ref({
   username: '',
@@ -99,6 +117,13 @@ const form = ref({
 const errors = ref({});
 const loginError = ref('');
 const isLoading = ref(false);
+const showPassword = ref(false);
+
+const toggleLanguage = () => {
+  locale.value = locale.value === 'en' ? 'ar' : 'en';
+  localStorage.setItem('language', locale.value);
+  document.documentElement.dir = locale.value === 'ar' ? 'rtl' : 'ltr';
+};
 
 const handleLogin = async () => {
   errors.value = {};

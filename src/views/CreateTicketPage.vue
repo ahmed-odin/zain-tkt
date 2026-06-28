@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="mx-auto mb-5 max-w-xl">
+      <h2 class="text-h2 font-bold">{{ $t('pages.createTitle') }}</h2>
+    </div>
     <CreateTicketModal inline @created="onCreated" @close="onClose" />
   </div>
 </template>

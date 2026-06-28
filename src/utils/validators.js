@@ -54,7 +54,7 @@ export function validateProblemDescription(value, status = '') {
  * Validate status
  */
 export function validateStatus(value) {
-  const validStatuses = ['Pending', 'Complete'];
+  const validStatuses = ['Pending', 'Complete', 'Reopened', 'Replied'];
   if (!validStatuses.includes(value)) {
     return 'validation.invalidStatus';
   }

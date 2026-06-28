@@ -14,13 +14,31 @@
     "searchPlaceholder": "Search tickets by MISSDN...",
     "resetFilters": "Reset Filters",
     "filterByStatus": "Filter by Status",
-    "filterByGovernorate": "Filter by Governorate"
+    "filterByGovernorate": "Filter by Governorate",
+    "filterByUser": "Filter by user",
+    "filterByUsername": "Filter by username",
+    "usernamePlaceholder": "Search username...",
+    "noResults": "No results",
+    "allUsers": "All users",
+    "dateFrom": "From",
+    "dateTo": "To"
+  },
+  "pagination": {
+    "showing": "Showing {from}–{to} of {total}",
+    "perPage": "Per page",
+    "prev": "Previous",
+    "next": "Next"
   },
   "nav": {
     "title": "Ticket System",
     "subtitle": "Management",
     "logout": "Logout",
-    "admin": "Administrator"
+    "admin": "Administrator",
+    "roles": {
+      "super_admin": "Super Admin",
+      "user": "User",
+      "staff": "Staff"
+    }
   },
   "dashboard": {
     "title": "Ticket Management System",
@@ -59,7 +77,9 @@
     "id": "Ticket #{id}",
     "status": {
       "Pending": "Pending",
-      "Complete": "Complete"
+      "Complete": "Complete",
+      "Reopened": "Reopened",
+      "Replied": "Replied"
     },
     "createdBy": "Created by: {name}",
     "completedBy": "Completed by: {name}",
@@ -77,11 +97,28 @@
     "updatedAt": "Updated At",
     "completedAt": "Completed At"
   },
+  "timeline": {
+    "title": "Timeline",
+    "created": "Created by {name}",
+    "completed": "Completed by {name}",
+    "reopened": "Reopened by {name}",
+    "replied": "Replied by {name}",
+    "edited": "Content edited by {name}",
+    "empty": "No activity yet"
+  },
+  "create": {
+    "subtitle": "Fill in the details to open a new ticket"
+  },
   "modal": {
     "createTitle": "Create New Ticket",
     "editTitle": "Edit Ticket #{id}",
+    "completeTitle": "Complete Ticket #{id}",
+    "completeSubtitle": "Enter the Alwaseet Company to close this ticket",
     "deleteTitle": "Delete Ticket?",
     "deleteConfirmMsg": "Are you sure you want to delete ticket #{id}? This action cannot be undone.",
+    "reopenTitle": "Reopen Ticket?",
+    "reopenConfirmMsg": "Are you sure you want to reopen ticket #{id}? It will move back to the pending list.",
+    "replyTitle": "Reply to Ticket #{id}",
     "fields": {
       "title": "MISSDN",
       "titlePlaceholder": "78*******",
@@ -92,6 +129,10 @@
       "commentsPlaceholder": "Add any additional details",
       "intermediary": "Alwaseet Company",
       "intermediaryPlaceholder": "Enter company name or details...",
+      "reopenReason": "Reopen reason",
+      "reopenReasonPlaceholder": "Explain why this ticket is being reopened...",
+      "reply": "Your reply",
+      "replyPlaceholder": "Type your answer to the staff...",
       "initialStatus": "Initial Status",
       "status": "Status",
       "statusDefaultMsg": "Status is set to Pending by default"
@@ -108,15 +149,46 @@
     "createTab": "Create Ticket",
     "pendingTab": "Pending Tickets",
     "completedTab": "Completed Tickets",
+    "usersTab": "Users",
     "completedBy": "Completed By"
+  },
+  "users": {
+    "title": "Users",
+    "addUser": "Add User",
+    "editUser": "Edit User",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "role": "Role",
+    "status": "Status",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "changePassword": "Change Password",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "you": "You",
+    "deleteTitle": "Delete User?",
+    "deleteConfirm": "Are you sure you want to delete {name}? This cannot be undone.",
+    "deactivateTitle": "Deactivate User?",
+    "deactivateConfirm": "Deactivate {name}? They will no longer be able to sign in.",
+    "activateTitle": "Activate User?",
+    "activateConfirm": "Activate {name}? They will be able to sign in again."
   },
   "actions": {
     "markComplete": "Mark as Complete",
     "reopen": "Reopen Ticket",
+    "reply": "Reply",
     "importExcel": "Import from Excel"
   },
   "excel": {
     "exportButton": "Export to Excel",
+    "exportByDate": "Export by date",
+    "exportRangeTitle": "Export by date range",
+    "exportRangeSubtitle": "Export completed tickets created within a date range.",
+    "exportRangeRequired": "Please select both a start and end date",
+    "exportRangeInvalid": "The start date must be before the end date",
     "importTitle": "Import Excel File",
     "importDescription": "Select a .xlsx, .xls, .ods, or .csv file with pending ticket rows to import.",
     "parsingFile": "Reading file...",
@@ -153,6 +225,13 @@
     "requiredGov": "Please select a governorate",
     "maxLengthComments": "Comments must not exceed 500 characters",
     "requiredAlwaseetCompany": "Alwaseet Company field is required before marking as complete",
+    "requiredReopenReason": "Please enter a reason for reopening",
+    "requiredReply": "Please enter your reply",
+    "requiredName": "Name is required",
+    "requiredEmail": "Email is required",
+    "invalidEmail": "Enter a valid email address",
+    "minPassword": "Password must be at least 6 characters",
+    "passwordMismatch": "Passwords do not match",
     "requiredDesc": "Problem description is required",
     "minLengthDesc": "Description must be at least 10 characters",
     "maxLengthDesc": "Description cannot exceed 5000 characters",

@@ -1,27 +1,40 @@
 <template>
   <div>
-    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <h2 class="text-h2 font-bold">{{ $t('pages.pendingTitle') }} ({{ pending.length }})</h2>
+    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-2.5">
+        <h2 class="text-h2 font-bold">{{ $t('pages.pendingTitle') }}</h2>
+        <span class="rounded-full bg-bg-tertiary px-2.5 py-0.5 text-sm font-semibold text-primary">{{ total }}</span>
+      </div>
       <div class="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
         <div class="relative w-full sm:w-72">
+          <Icon icon="lucide:search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-light rtl:left-auto rtl:right-3" />
           <input
             v-model="query"
             :placeholder="$t('common.search')"
-            class="w-full rounded-xl border border-gray-200 py-2 pl-10 pr-3 text-sm focus:border-blue-400 focus:outline-none rtl:pl-3 rtl:pr-10"
+            class="w-full rounded-lg border border-border bg-white py-2 pl-9 pr-3 text-sm text-text-primary placeholder:text-text-light focus:border-primary focus:outline-none rtl:pl-3 rtl:pr-9"
           />
-          <svg class="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 rtl:left-auto rtl:right-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-          </svg>
         </div>
         <button
+          v-if="authStore.isUser || authStore.isSuperAdmin"
           type="button"
           @click="showImportModal = true"
-          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
         >
-          📤 {{ $t('actions.importExcel') }}
+          <Icon icon="lucide:upload" class="h-4 w-4" /> {{ $t('actions.importExcel') }}
         </button>
       </div>
     </div>
+
+    <TicketFilters
+      v-model:dateFrom="dateFrom"
+      v-model:dateTo="dateTo"
+      v-model:userFilter="userFilter"
+      v-model:governorate="governorate"
+      :users="users"
+      :governorates="governorates"
+      :has-active-filters="hasActiveFilters"
+      @reset="resetFilters"
+    />
 
     <div v-if="actionError" class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
       {{ actionError }}
@@ -29,56 +42,118 @@
     <div v-if="importStatus" class="mb-4 rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
       {{ importStatus }}
     </div>
-    <div v-if="filtered.length === 0" class="rounded-card border border-gray-200 bg-white py-12 text-center">
-      <p class="text-text-secondary">{{ $t('dashboard.empty.title') }}</p>
+    <TableSkeleton v-if="isLoading" :columns="8" :rows="6" />
+
+    <div v-else-if="total === 0" class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-white py-16 text-center">
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-bg-secondary text-text-light">
+        <Icon icon="lucide:inbox" class="h-6 w-6" />
+      </div>
+      <p class="font-medium text-text-primary">{{ $t('dashboard.empty.title') }}</p>
+      <p v-if="hasActiveFilters" class="text-sm text-text-secondary">{{ $t('dashboard.empty.subtitleSearch') }}</p>
     </div>
 
-    <div v-else class="overflow-x-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+    <div v-else class="overflow-x-auto rounded-xl border border-border bg-white shadow-card">
       <table class="min-w-[920px] w-full text-sm" dir="rtl">
-        <thead class="bg-gradient-to-r from-blue-50 to-blue-100 border-b-2 border-blue-200">
+        <thead class="bg-bg-secondary border-b border-border">
           <tr>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">الإجراءات</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">تاريخ الإنشاء</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">بواسطة</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">الحالة</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">المحافظة</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">التعليق</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900 border-r border-gray-200">MISSDN</th>
-            <th class="px-6 py-4 text-right text-sm font-bold text-blue-900">رقم</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الإجراءات</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">تاريخ الإنشاء</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">بواسطة</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الحالة</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">المحافظة</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">التعليق</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">MISSDN</th>
+            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">رقم</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            v-for="t in filtered"
+            v-for="t in pending"
             :key="t.id"
             @click="openDetails(t)"
-            class="border-b border-gray-100 hover:bg-gray-50 transition-all duration-300 hover:shadow-sm cursor-pointer"
+            class="border-b border-border last:border-0 hover:bg-bg-secondary transition-colors cursor-pointer"
           >
-            <td class="px-6 py-4 text-sm text-gray-700 border-r border-gray-100 flex gap-2 justify-center">
-              <button
-                @click.stop="openEdit(t)"
-                class="p-2.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 hover:shadow-sm"
-                aria-label="Edit"
-              >🖊️</button>
-              <button
-                @click.stop="markComplete(t.id)"
-                class="p-2.5 rounded-lg text-gray-500 hover:text-green-600 hover:bg-green-50 transition-all duration-200 hover:shadow-sm"
-                aria-label="Mark Complete"
-              >✅</button>
+            <td class="px-6 py-4 text-sm text-gray-700">
+              <div class="flex gap-2 justify-center">
+                <button
+                  v-if="canEdit(t)"
+                  @click.stop="openEdit(t)"
+                  class="p-2 rounded-lg text-text-light hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 hover:shadow-sm"
+                  :aria-label="$t('common.edit')"
+                  :title="$t('common.edit')"
+                >
+                  <Icon icon="lucide:pencil" class="h-4 w-4" />
+                </button>
+                <button
+                  v-if="canReply(t)"
+                  @click.stop="openReply(t)"
+                  class="p-2 rounded-lg text-text-light hover:text-sky-600 hover:bg-sky-50 transition-all duration-200 hover:shadow-sm"
+                  :aria-label="$t('actions.reply')"
+                  :title="$t('actions.reply')"
+                >
+                  <Icon icon="lucide:reply" class="h-4 w-4" />
+                </button>
+                <button
+                  v-if="canComplete"
+                  @click.stop="openComplete(t)"
+                  class="p-2 rounded-lg text-text-light hover:text-green-600 hover:bg-green-50 transition-all duration-200 hover:shadow-sm"
+                  :aria-label="$t('actions.markComplete')"
+                  :title="$t('actions.markComplete')"
+                >
+                  <Icon icon="lucide:check-circle" class="h-4 w-4" />
+                </button>
+                <button
+                  v-if="canDelete"
+                  @click.stop="openDelete(t)"
+                  class="p-2 rounded-lg text-text-light hover:text-red-600 hover:bg-red-50 transition-all duration-200 hover:shadow-sm"
+                  :aria-label="$t('common.delete')"
+                  :title="$t('common.delete')"
+                >
+                  <Icon icon="lucide:trash-2" class="h-4 w-4" />
+                </button>
+                <span v-if="!canEdit(t) && !canReply(t) && !canComplete && !canDelete" class="text-text-light">—</span>
+              </div>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-600 border-r border-gray-100">{{ formatDateTime(t.createdAt) }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700 border-r border-gray-100">{{ t.createdBy }}</td>
-            <td class="px-6 py-4 border-r border-gray-100">
-              <span class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-xs font-semibold border border-gray-300">⏳ {{ $t('ticket.status.Pending') }}</span>
+            <td class="px-6 py-4 text-sm text-text-secondary whitespace-nowrap">{{ formatDateTime(t.createdAt) }}</td>
+            <td class="px-6 py-4 text-sm text-text-primary">{{ t.createdBy }}</td>
+            <td class="px-6 py-4">
+              <span
+                v-if="t.status === 'Reopened'"
+                class="badge bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200"
+              >
+                <span class="badge-dot bg-amber-500"></span> {{ $t('ticket.status.Reopened') }}
+              </span>
+              <span
+                v-else-if="t.status === 'Replied'"
+                class="badge bg-sky-50 text-sky-700 ring-1 ring-inset ring-sky-200"
+              >
+                <span class="badge-dot bg-sky-500"></span> {{ $t('ticket.status.Replied') }}
+              </span>
+              <span
+                v-else
+                class="badge bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200"
+              >
+                <span class="badge-dot bg-slate-400"></span> {{ $t('ticket.status.Pending') }}
+              </span>
             </td>
-            <td class="px-6 py-4 text-sm text-gray-700 border-r border-gray-100">{{ t.governorate }}</td>
-            <td class="px-6 py-4 text-sm text-gray-700 border-r border-gray-100">{{ t.comments || '-' }}</td>
-            <td class="px-6 py-4 text-sm font-mono text-gray-700 border-r border-gray-100">{{ t.missdn }}</td>
-            <td class="px-6 py-4 text-sm text-gray-600">#{{ t.id }}</td>
+            <td class="px-6 py-4 text-sm text-text-primary">{{ t.governorate }}</td>
+            <td class="px-6 py-4 text-sm text-text-secondary">{{ t.comments || '—' }}</td>
+            <td class="px-6 py-4 text-sm font-mono text-text-primary">{{ t.missdn }}</td>
+            <td class="px-6 py-4 text-sm text-text-light">#{{ t.id }}</td>
           </tr>
         </tbody>
       </table>
     </div>
+
+    <Pagination
+      v-if="!isLoading && total"
+      :page="page"
+      :total-pages="totalPages"
+      :page-size="pageSize"
+      :total="total"
+      @update:page="goToPage"
+      @update:page-size="setPageSize"
+    />
 
     <TicketDetailsModal
       v-if="viewing"
@@ -99,69 +174,138 @@
       @close="showImportModal = false"
       @import="handleImport"
     />
+
+    <CompleteTicketModal
+      v-if="completing"
+      :ticket="completing"
+      @close="completing = null"
+      @confirm="confirmComplete"
+    />
+
+    <ReplyTicketModal
+      v-if="replying"
+      :ticket="replying"
+      @close="replying = null"
+      @confirm="confirmReply"
+    />
+
+    <ConfirmDeleteModal
+      v-if="deleting"
+      :ticket="deleting"
+      @close="deleting = null"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { Icon } from '@iconify/vue';
 import { useTicketStore } from '../stores/ticketStore';
+import { useAuthStore } from '../stores/authStore';
 import { formatDateTime } from '../utils/dateFormatter';
 import { useI18n } from 'vue-i18n';
 import EditTicketModal from '../components/EditTicketModal.vue';
 import TicketDetailsModal from '../components/TicketDetailsModal.vue';
 import ImportExcelModal from '../components/ImportExcelModal.vue';
+import CompleteTicketModal from '../components/CompleteTicketModal.vue';
+import ReplyTicketModal from '../components/ReplyTicketModal.vue';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal.vue';
+import TableSkeleton from '../components/TableSkeleton.vue';
+import TicketFilters from '../components/TicketFilters.vue';
+import Pagination from '../components/Pagination.vue';
+import { useServerTickets } from '../composables/useServerTickets';
 
-const query = ref('');
 const ticketStore = useTicketStore();
+const authStore = useAuthStore();
 const { t } = useI18n();
 
-const pending = computed(() => ticketStore.tickets.filter(t => t.status === 'Pending'));
+// Role-based action permissions
+const canComplete = computed(() => authStore.isStaff || authStore.isSuperAdmin);
+const canDelete = computed(() => authStore.isSuperAdmin);
+const canEdit = (ticket) =>
+  authStore.isSuperAdmin || (authStore.isUser && ticket.createdById === authStore.currentUser?.id);
+// The ticket owner (or a super admin) can reply to a reopened ticket.
+const canReply = (ticket) =>
+  ticket.status === 'Reopened' &&
+  (authStore.isSuperAdmin || (authStore.isUser && ticket.createdById === authStore.currentUser?.id));
 
-const filtered = computed(() => {
-  const q = query.value.trim().toLowerCase();
-  if (!q) return pending.value;
-  return pending.value.filter(t => {
-    return String(t.missdn).includes(q)
-      || (t.problemDescription && t.problemDescription.toLowerCase().includes(q))
-      || (t.comments && t.comments.toLowerCase().includes(q))
-      || (t.governorate && t.governorate.toLowerCase().includes(q));
-  });
-});
+// Current page of rows (the server already returns only pending/reopened tickets).
+const pending = computed(() => ticketStore.tickets);
+
+const {
+  query, dateFrom, dateTo, userFilter, governorate, page, pageSize,
+  totalPages, total, isLoading, load, goToPage, setPageSize, hasActiveFilters, resetFilters,
+} = useServerTickets((params) => ticketStore.fetchPendingTickets(params));
+
+const users = ref([]);
+const governorates = ref([]);
 
 const viewing = ref(null);
 const editing = ref(null);
+const completing = ref(null);
+const replying = ref(null);
+const deleting = ref(null);
 const showImportModal = ref(false);
 const importStatus = ref('');
 const actionError = ref('');
 
 onMounted(async () => {
-  await ticketStore.fetchPendingTickets();
+  await load();
+  const opts = await ticketStore.fetchFilterOptions();
+  users.value = opts.users;
+  governorates.value = opts.governorates;
 });
 
 const openDetails = (t) => { viewing.value = { ...t }; };
 const openEdit = (t) => { editing.value = { ...t }; };
 const editFromDetails = (t) => { viewing.value = null; editing.value = { ...t }; };
-const handleImport = (tickets) => {
-  tickets.forEach(ticket => ticketStore.createTicket(ticket));
-  importStatus.value = t('excel.importSuccess', { count: tickets.length });
-  showImportModal.value = false;
-  setTimeout(() => { importStatus.value = ''; }, 4500);
-};
-const markComplete = async (id) => {
-  const ticket = ticketStore.getTicketById(id);
-  if (!ticket) return;
-
-  if (!ticket.problemDescription || !ticket.problemDescription.trim()) {
-    actionError.value = t('validation.requiredAlwaseetCompany');
+const handleImport = async (tickets) => {
+  const count = await ticketStore.bulkCreateTickets(tickets);
+  if (count === null) {
+    actionError.value = ticketStore.error || 'Unable to import tickets';
     return;
   }
-
-  const completed = await ticketStore.markComplete(id, ticket.problemDescription);
+  importStatus.value = t('excel.importSuccess', { count });
+  showImportModal.value = false;
+  await load();
+  setTimeout(() => { importStatus.value = ''; }, 4500);
+};
+const openComplete = (t) => { actionError.value = ''; completing.value = { ...t }; };
+const confirmComplete = async (alwaseetCompany) => {
+  const id = completing.value?.id;
+  if (!id) return;
+  const completed = await ticketStore.markComplete(id, alwaseetCompany);
   if (!completed) {
-    actionError.value = ticketStore.error || t('ticket.completeError');
+    actionError.value = ticketStore.error || t('validation.requiredAlwaseetCompany');
   } else {
     actionError.value = '';
+    await load();
   }
+  completing.value = null;
 };
-const closeEdit = () => { editing.value = null; };
+const openReply = (t) => { actionError.value = ''; replying.value = { ...t }; };
+const confirmReply = async (reply) => {
+  const id = replying.value?.id;
+  if (!id) return;
+  const ok = await ticketStore.replyTicket(id, reply);
+  if (!ok) {
+    actionError.value = ticketStore.error || 'Unable to send reply';
+  } else {
+    actionError.value = '';
+    await load();
+  }
+  replying.value = null;
+};
+const openDelete = (t) => { actionError.value = ''; deleting.value = { ...t }; };
+const confirmDelete = async (id) => {
+  const ok = await ticketStore.deleteTicket(id);
+  if (!ok) {
+    actionError.value = ticketStore.error || 'Unable to delete ticket';
+  } else {
+    await load();
+  }
+  deleting.value = null;
+};
+const closeEdit = async () => { editing.value = null; await load(); };
 </script>

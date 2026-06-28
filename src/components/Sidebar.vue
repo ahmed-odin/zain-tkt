@@ -22,16 +22,16 @@
         :to="item.to"
         @click="emit('close')"
         :class="[
-          'mx-2 flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200',
+          'mx-2 flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm transition-colors',
           'md:justify-center md:px-2 lg:justify-start lg:px-4',
           isActive(item.routeName)
-            ? 'bg-primary text-white shadow-sm'
-            : 'text-text-primary hover:bg-bg-secondary hover:text-primary'
+            ? 'bg-bg-tertiary font-semibold text-primary'
+            : 'font-medium text-text-secondary hover:bg-bg-secondary hover:text-text-primary'
         ]"
         :title="item.label"
       >
         <component :is="item.icon" class="h-5 w-5 flex-shrink-0" />
-        <span class="text-sm font-medium md:hidden lg:inline">{{ item.label }}</span>
+        <span class="md:hidden lg:inline">{{ item.label }}</span>
       </router-link>
     </nav>
   </aside>
@@ -41,6 +41,7 @@
 import { computed, h } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '../stores/authStore';
 
 defineProps({
   open: { type: Boolean, default: false }
@@ -50,6 +51,7 @@ const emit = defineEmits(['close']);
 
 const route = useRoute();
 const { t } = useI18n();
+const authStore = useAuthStore();
 
 const PlusIcon = {
   render() {
@@ -75,11 +77,28 @@ const CheckListIcon = {
   }
 };
 
-const navItems = computed(() => [
-  { to: '/create', routeName: 'CreateTicket', label: t('pages.createTab'), icon: PlusIcon },
-  { to: '/pending', routeName: 'PendingTickets', label: t('pages.pendingTab'), icon: ListIcon },
-  { to: '/completed', routeName: 'CompletedTickets', label: t('pages.completedTab'), icon: CheckListIcon }
-]);
+const UsersIcon = {
+  render() {
+    return h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'w-5 h-5' }, [
+      h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 00-1.5-7.8' })
+    ]);
+  }
+};
+
+const navItems = computed(() => {
+  const items = [];
+  // Users and super admins can create tickets.
+  if (authStore.isUser || authStore.isSuperAdmin) {
+    items.push({ to: '/create', routeName: 'CreateTicket', label: t('pages.createTab'), icon: PlusIcon });
+  }
+  items.push({ to: '/pending', routeName: 'PendingTickets', label: t('pages.pendingTab'), icon: ListIcon });
+  items.push({ to: '/completed', routeName: 'CompletedTickets', label: t('pages.completedTab'), icon: CheckListIcon });
+  // Only super admins manage users.
+  if (authStore.isSuperAdmin) {
+    items.push({ to: '/users', routeName: 'Users', label: t('pages.usersTab'), icon: UsersIcon });
+  }
+  return items;
+});
 
 const isActive = (routeName) => route.name === routeName;
 </script>

@@ -11,12 +11,37 @@ html {
 }
 
 body {
-  @apply bg-bg-secondary text-text-primary;
+  @apply bg-bg-secondary text-text-primary antialiased;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
   min-height: 100vh;
+}
+
+/* Consistent, accessible focus ring for interactive controls */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  @apply outline-none ring-2 ring-primary/30 ring-offset-1 ring-offset-white;
+}
+
+::selection {
+  @apply bg-primary/15 text-text-primary;
+}
+
+@layer components {
+  /* Pill badge with an optional leading status dot */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+  .badge-dot {
+    @apply h-1.5 w-1.5 rounded-full;
+  }
 }
 
 /* Custom scrollbar */

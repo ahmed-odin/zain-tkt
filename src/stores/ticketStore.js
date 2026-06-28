@@ -10,11 +10,20 @@ const mapTicket = (ticket) => ({
   comments: ticket.comments || '',
   problemDescription: ticket.alwaseet_company || '',
   status: ticket.status,
+  createdById: ticket.created_by,
   createdBy: ticket.creator?.name || ticket.creator?.email || 'Unknown',
   completedBy: ticket.completer?.name || ticket.completer?.email || ticket.completed_by || '—',
   createdAt: ticket.created_at,
   updatedAt: ticket.updated_at,
   completedAt: ticket.completed_at,
+  timeline: (ticket.activities || []).map((activity) => ({
+    id: activity.id,
+    action: activity.action,
+    fields: activity.changes?.fields || [],
+    note: activity.changes?.reason || activity.changes?.reply || '',
+    by: activity.user?.name || activity.user?.email || 'Unknown',
+    at: activity.created_at,
+  })),
 });
 
 export const useTicketStore = defineStore('ticket', () => {
@@ -33,10 +42,10 @@ export const useTicketStore = defineStore('ticket', () => {
     try {
       const response = await api.get('/tickets/pending', { params });
       setTickets(response.data.tickets);
-      return response.data.tickets;
+      return response.data.meta || null;
     } catch (err) {
       error.value = err.response?.data?.message || 'Unable to load pending tickets';
-      return [];
+      return null;
     } finally {
       loading.value = false;
     }
@@ -49,12 +58,46 @@ export const useTicketStore = defineStore('ticket', () => {
     try {
       const response = await api.get('/tickets/completed', { params });
       setTickets(response.data.tickets);
-      return response.data.tickets;
+      return response.data.meta || null;
     } catch (err) {
       error.value = err.response?.data?.message || 'Unable to load completed tickets';
-      return [];
+      return null;
     } finally {
       loading.value = false;
+    }
+  };
+
+  // Fetch a list without mutating the store (used for Excel export of all matches).
+  const fetchCompletedForExport = async (params = {}) => {
+    try {
+      const response = await api.get('/tickets/completed', {
+        params: { ...params, per_page: 100, page: 1 },
+      });
+      let rows = response.data.tickets.map(mapTicket);
+      const meta = response.data.meta;
+      // Pull remaining pages if the result spans more than one.
+      if (meta && meta.last_page > 1) {
+        for (let p = 2; p <= meta.last_page; p++) {
+          const next = await api.get('/tickets/completed', { params: { ...params, per_page: 100, page: p } });
+          rows = rows.concat(next.data.tickets.map(mapTicket));
+        }
+      }
+      return rows;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to export tickets';
+      return [];
+    }
+  };
+
+  const fetchFilterOptions = async () => {
+    try {
+      const response = await api.get('/tickets/filter-users');
+      return {
+        users: response.data.users || [],
+        governorates: response.data.governorates || [],
+      };
+    } catch {
+      return { users: [], governorates: [] };
     }
   };
 
@@ -81,6 +124,28 @@ export const useTicketStore = defineStore('ticket', () => {
     }
   };
 
+  const bulkCreateTickets = async (newTickets) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const payload = {
+        tickets: newTickets.map((ticket) => ({
+          missdn: ticket.missdn,
+          governorate: ticket.governorate,
+          comments: ticket.comments || null,
+        })),
+      };
+      const response = await api.post('/tickets/bulk', payload);
+      return response.data.count ?? newTickets.length;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to import tickets';
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const updateTicket = async (id, updates) => {
     loading.value = true;
     error.value = null;
@@ -92,6 +157,7 @@ export const useTicketStore = defineStore('ticket', () => {
         comments: updates.comments,
         status: updates.status,
         alwaseet_company: updates.problemDescription,
+        reopen_reason: updates.reopenReason,
       };
       const response = await api.put(`/tickets/${id}`, payload);
       const updatedTicket = mapTicket(response.data.ticket);
@@ -118,6 +184,39 @@ export const useTicketStore = defineStore('ticket', () => {
       return completedTicket;
     } catch (err) {
       error.value = err.response?.data?.message || 'Unable to complete ticket';
+      return null;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const deleteTicket = async (id) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      await api.delete(`/tickets/${id}`);
+      tickets.value = tickets.value.filter((ticket) => ticket.id !== id);
+      return true;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to delete ticket';
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const replyTicket = async (id, reply) => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await api.post(`/tickets/${id}/reply`, { reply });
+      const updated = mapTicket(response.data.ticket);
+      tickets.value = tickets.value.map((ticket) => (ticket.id === id ? updated : ticket));
+      return updated;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to send reply';
       return null;
     } finally {
       loading.value = false;
@@ -168,9 +267,14 @@ export const useTicketStore = defineStore('ticket', () => {
     ticketStats,
     fetchPendingTickets,
     fetchCompletedTickets,
+    fetchCompletedForExport,
+    fetchFilterOptions,
     createTicket,
+    bulkCreateTickets,
     updateTicket,
     markComplete,
+    replyTicket,
+    deleteTicket,
     getTicketById,
     searchTickets,
     getGovernorateStats,

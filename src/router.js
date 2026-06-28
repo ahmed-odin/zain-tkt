@@ -21,7 +21,8 @@ const routes = [
       {
         path: 'create',
         name: 'CreateTicket',
-        component: () => import('./views/CreateTicketPage.vue')
+        component: () => import('./views/CreateTicketPage.vue'),
+        meta: { roles: ['user', 'super_admin'] }
       },
       {
         path: 'pending',
@@ -32,6 +33,12 @@ const routes = [
         path: 'completed',
         name: 'CompletedTickets',
         component: () => import('./views/CompletedTicketsPage.vue')
+      },
+      {
+        path: 'users',
+        name: 'Users',
+        component: () => import('./views/UsersPage.vue'),
+        meta: { roles: ['super_admin'] }
       }
     ]
   },
@@ -60,6 +67,11 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (to.path === '/login' && authStore.isAuthenticated) {
+    return next('/pending');
+  }
+
+  const allowedRoles = to.matched.reduce((roles, record) => record.meta.roles || roles, null);
+  if (allowedRoles && authStore.role && !allowedRoles.includes(authStore.role)) {
     return next('/pending');
   }
 
