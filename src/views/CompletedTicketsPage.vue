@@ -53,19 +53,19 @@
     </div>
 
     <div v-else class="overflow-x-auto rounded-xl border border-border bg-white shadow-card">
-      <table class="min-w-[920px] w-full text-sm" dir="rtl">
-        <thead class="bg-bg-secondary border-b border-border">
+      <table class="w-full min-w-[860px] table-auto text-sm" dir="rtl">
+        <thead class="border-b border-border bg-bg-secondary">
           <tr>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الإجراءات</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">تاريخ الإتمام</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">تاريخ الإنشاء</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">مكتمل بواسطة</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الحالة</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">المحافظة</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">شركة الوسيط</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">التعليقات</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">MISSDN</th>
-            <th class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">رقم</th>
+            <th class="w-28 whitespace-nowrap px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الإجراءات</th>
+            <th class="w-36 whitespace-nowrap px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">تاريخ الإتمام</th>
+            <th class="w-36 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">تاريخ الإنشاء</th>
+            <th class="w-32 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">مكتمل بواسطة</th>
+            <th class="w-24 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">الحالة</th>
+            <th class="w-28 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">المحافظة</th>
+            <th class="w-40 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">شركة الوسيط</th>
+            <th class="w-40 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">التعليقات</th>
+            <th class="w-28 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">MISSDN</th>
+            <th class="w-16 px-3 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-text-secondary">رقم</th>
           </tr>
         </thead>
         <tbody>
@@ -73,10 +73,10 @@
             v-for="t in completed"
             :key="t.id"
             @click="openDetails(t)"
-            class="border-b border-border last:border-0 hover:bg-bg-secondary transition-colors cursor-pointer"
+            class="cursor-pointer border-b border-border last:border-0 transition-colors hover:bg-bg-secondary"
           >
-            <td class="px-6 py-4 text-sm text-gray-700">
-              <div class="flex gap-2 justify-center">
+            <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+              <div class="flex justify-center gap-2">
                 <button
                   v-if="canEdit(t)"
                   @click.stop="openEdit(t)"
@@ -107,19 +107,19 @@
                 <span v-if="!canEdit(t) && !canReopen && !canDelete" class="text-gray-300">—</span>
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-text-secondary whitespace-nowrap">{{ formatDateTime(t.completedAt) }}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary whitespace-nowrap">{{ formatDateTime(t.createdAt) }}</td>
-            <td class="px-6 py-4 text-sm text-text-primary">{{ t.completedBy || '—' }}</td>
-            <td class="px-6 py-4">
+            <td class="px-3 py-4 text-sm text-text-secondary whitespace-normal break-words">{{ formatDateTime(t.completedAt) }}</td>
+            <td class="px-3 py-4 text-sm text-text-secondary whitespace-normal break-words">{{ formatDateTime(t.createdAt) }}</td>
+            <td class="px-3 py-4 text-sm text-text-primary whitespace-normal break-words">{{ t.completedBy || '—' }}</td>
+            <td class="px-3 py-4">
               <span class="badge bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-200">
                 <span class="badge-dot bg-emerald-500"></span> {{ $t('ticket.status.Complete') }}
               </span>
             </td>
-            <td class="px-6 py-4 text-sm text-text-primary">{{ t.governorate }}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">{{ t.problemDescription || '—' }}</td>
-            <td class="px-6 py-4 text-sm text-text-secondary">{{ t.comments || '—' }}</td>
-            <td class="px-6 py-4 text-sm font-mono text-text-primary">{{ t.missdn }}</td>
-            <td class="px-6 py-4 text-sm text-text-light">#{{ t.id }}</td>
+            <td class="px-3 py-4 text-sm text-text-primary whitespace-normal break-words">{{ t.governorate }}</td>
+            <td class="px-3 py-4 text-sm text-text-secondary whitespace-normal break-words">{{ t.problemDescription || '—' }}</td>
+            <td class="px-3 py-4 text-sm text-text-secondary whitespace-normal break-words">{{ t.comments || '—' }}</td>
+            <td class="px-3 py-4 text-sm font-mono text-text-primary whitespace-normal break-words">{{ t.missdn }}</td>
+            <td class="px-3 py-4 text-sm text-text-light whitespace-normal break-words">#{{ t.id }}</td>
           </tr>
         </tbody>
       </table>
