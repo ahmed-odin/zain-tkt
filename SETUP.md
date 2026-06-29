@@ -1,8 +1,31 @@
 # Zain Ticket System — Frontend (`zain-tkt`)
 
-Vue 3 + Vite UI for the ticket system. It talks to the Laravel API in the
-`tktzainbackend` repo, so **start the backend first** (see
-`tktzainbackend/SETUP.md`).
+Vue 3 + Vite UI for the ticket system.
+
+## Mock mode (dummy data — no backend) — **ON by default**
+
+The app ships with a built-in **mock mode** so it works standalone with no
+server: every API call is served from seeded **dummy data** kept in your
+browser (localStorage), and every action — login, create / edit / complete /
+reopen / reply / delete tickets, manage users — mutates that data just like the
+real API would. This is what powers the **Vercel deployment**
+(https://zain-tkt.vercel.app) until a real host is purchased.
+
+- Log in with the same demo accounts below (e.g. `Admin` / `admin`).
+- Your changes persist across refreshes. To wipe back to the original sample
+  data, open the browser console and run `window.__resetMockData()` then reload.
+- Mock mode needs **no `.env` and no backend** — `npm run dev` just works.
+
+When you buy hosting and deploy the Laravel API, switch to it by creating a
+`.env` here (see `.env.example`):
+
+```
+VITE_USE_MOCK=false
+VITE_API_URL=https://your-api-host/api
+```
+
+The rest of this guide is for running against the **real backend** (start it
+first — see `tktzainbackend/SETUP.md`).
 
 ## Prerequisites
 
