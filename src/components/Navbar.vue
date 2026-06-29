@@ -32,8 +32,8 @@
         </button>
 
         <div class="flex items-center gap-2.5">
-          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-bg-tertiary text-sm font-semibold text-primary">
-            {{ userInitials }}
+          <div class="flex h-9 w-9 items-center justify-center rounded-full bg-bg-tertiary text-primary">
+            <Icon icon="lucide:user-circle" class="h-5 w-5" />
           </div>
           <div class="hidden min-w-0 text-right sm:block rtl:text-left">
             <p class="truncate text-sm font-medium leading-tight text-text-primary">{{ currentUsername }}</p>
