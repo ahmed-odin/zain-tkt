@@ -42,6 +42,7 @@ import { computed, h } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '../stores/authStore';
+import { Icon } from '@iconify/vue';
 
 defineProps({
   open: { type: Boolean, default: false }
@@ -79,9 +80,7 @@ const CheckListIcon = {
 
 const UsersIcon = {
   render() {
-    return h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'w-5 h-5' }, [
-      h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 00-1.5-7.8' })
-    ]);
+    return h(Icon, { icon: 'fa7-solid:users', class: 'w-5 h-5 flex-shrink-0' });
   }
 };
 

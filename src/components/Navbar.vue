@@ -10,7 +10,7 @@
         >
           <svg class="h-6 w-6 text-text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-          </svg>
+          </svg> 
         </button>
 
         <div class="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg">
@@ -33,7 +33,7 @@
 
         <div class="flex items-center gap-2.5">
           <div class="flex h-9 w-9 items-center justify-center rounded-full bg-bg-tertiary text-primary">
-            <Icon icon="lucide:user-circle" class="h-5 w-5" />
+            <Icon icon="fa7-solid:users" class="h-5 w-5" />
           </div>
           <div class="hidden min-w-0 text-right sm:block rtl:text-left">
             <p class="truncate text-sm font-medium leading-tight text-text-primary">{{ currentUsername }}</p>
