@@ -113,7 +113,7 @@ const addActivity = (db, ticket, userId, action, changes = null) => {
 const validationError = (config, errors) =>
   fail(config, 422, { success: false, message: Object.values(errors)[0][0], errors });
 
-const isTenDigits = (v) => /^\d{10}$/.test(String(v ?? ''));
+const isTenDigits = (v) => /^[1-9]\d{9}$/.test(String(v ?? ''));
 
 // ---- list (pending / completed) -----------------------------------------
 
@@ -234,7 +234,7 @@ export function mockAdapter(config) {
 
   // --- create ticket ---
   if (path === '/tickets' && method === 'post') {
-    if (!['user', 'super_admin'].includes(me.role)) {
+    if (!['zain', 'super_admin'].includes(me.role)) {
       return fail(config, 403, { success: false, message: 'You are not allowed to create tickets' });
     }
     if (!isTenDigits(body.missdn)) return validationError(config, { missdn: ['The missdn field must be 10 digits.'] });
@@ -267,7 +267,7 @@ export function mockAdapter(config) {
 
   // --- bulk create ---
   if (path === '/tickets/bulk' && method === 'post') {
-    if (!['user', 'super_admin'].includes(me.role)) {
+    if (!['zain', 'super_admin'].includes(me.role)) {
       return fail(config, 403, { success: false, message: 'You are not allowed to create tickets' });
     }
     const rows = Array.isArray(body.tickets) ? body.tickets : [];
@@ -317,7 +317,7 @@ export function mockAdapter(config) {
 
     // complete
     if (sub === '/complete' && method === 'post') {
-      if (!['staff', 'super_admin'].includes(me.role)) {
+      if (!['الوسيط', 'super_admin'].includes(me.role)) {
         return fail(config, 403, { success: false, message: 'You are not allowed to complete tickets' });
       }
       if (!body.alwaseet_company) return validationError(config, { alwaseet_company: ['The Alwaseet Company field is required.'] });
@@ -367,10 +367,10 @@ export function mockAdapter(config) {
         trackContent('comments', body.comments);
         trackContent('alwaseet_company', body.alwaseet_company);
         applyStatus(db, ticket, body.status, me, body.reopen_reason);
-      } else if (me.role === 'staff') {
+      } else if (me.role === 'الوسيط') {
         trackContent('alwaseet_company', body.alwaseet_company);
         applyStatus(db, ticket, body.status, me, body.reopen_reason);
-      } else if (me.role === 'user') {
+      } else if (me.role === 'zain') {
         if (me.id !== ticket.created_by) {
           return fail(config, 403, { success: false, message: 'Unauthorized' });
         }
@@ -431,7 +431,7 @@ export function mockAdapter(config) {
     if (!body.password || String(body.password).length < 6) {
       return validationError(config, { password: ['The password must be at least 6 characters.'] });
     }
-    if (!['super_admin', 'user', 'staff'].includes(body.role)) {
+    if (!['super_admin', 'zain', 'الوسيط'].includes(body.role)) {
       return validationError(config, { role: ['The selected role is invalid.'] });
     }
     db.seq.user += 1;

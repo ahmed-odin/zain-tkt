@@ -87,7 +87,7 @@ const UsersIcon = {
 const navItems = computed(() => {
   const items = [];
   // Users and super admins can create tickets.
-  if (authStore.isUser || authStore.isSuperAdmin) {
+  if (authStore.isZainRole || authStore.isSuperAdmin) {
     items.push({ to: '/create', routeName: 'CreateTicket', label: t('pages.createTab'), icon: PlusIcon });
   }
   items.push({ to: '/pending', routeName: 'PendingTickets', label: t('pages.pendingTab'), icon: ListIcon });

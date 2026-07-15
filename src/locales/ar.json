@@ -30,18 +30,18 @@
     "next": "التالي"
   },
   "nav": {
-    "title": "نظام التذاكر",
+    "title": "مشاكل التوصيل",
     "subtitle": "الإدارة",
     "logout": "تسجيل خروج",
     "admin": "مسؤول",
     "roles": {
       "super_admin": "مدير عام",
-      "user": "مستخدم",
-      "staff": "موظف"
+      "zain": "Zain",
+      "الوسيط": "الوسيط"
     }
   },
   "dashboard": {
-    "title": "نظام إدارة التذاكر",
+    "title": "مشاكل التوصيل",
     "subtitle": "إدارة وتتبع جميع التذاكر الخاصة بك",
     "createNew": "إنشاء تذكرة جديدة",
     "stats": {
@@ -121,11 +121,11 @@
     "replyTitle": "الرد على التذكرة #{id}",
     "fields": {
       "title": "MISSDN",
-      "titlePlaceholder": "*******78",
+      "titlePlaceholder": "7869766706: EX",
       "reason": "شركة الوسيط",
       "reasonPlaceholder": "أدخل اسم الشركة أو التفاصيل...",
       "governorate": "المحافظة",
-      "comments": "التعليقات / الوصف",
+      "comments": "تعليق زين ",
       "commentsPlaceholder": "أضف أي تفاصيل إضافية",
       "intermediary": "شركة الوسيط",
       "intermediaryPlaceholder": "أدخل اسم الشركة أو التفاصيل...",
@@ -205,8 +205,8 @@
     "importSuccess": "تم استيراد {count} تذاكر بنجاح"
   },
   "login": {
-    "title": "إدارة التذاكر",
-    "subtitle": "تسجيل الدخول إلى حسابك",
+    "title": "مشاكل التوصيل",
+    "subtitle": "نظام تتبع مشاكل التوصيل والشكاوى",
     "identifier": "اسم المستخدم أو البريد الإلكتروني",
     "identifierPlaceholder": "أدخل اسم المستخدم أو البريد الإلكتروني",
     "username": "اسم المستخدم",
@@ -221,8 +221,10 @@
   "validation": {
     "requiredMissdn": "MISSDN مطلوب",
     "lengthMissdn": "يجب أن يتكون MISSDN من 10 أرقام بالضبط",
+    "noLeadingZeroMissdn": "يجب أن يكون MISSDN 10 أرقام بدون صفر في البداية",
     "invalidMissdn": "يجب أن يحتوي MISSDN على أرقام فقط",
     "requiredGov": "الرجاء اختيار المحافظة",
+    "requiredComments": "التعليق مطلوب",
     "maxLengthComments": "التعليقات يجب ألا تتجاوز 500 حرف",
     "requiredAlwaseetCompany": "يجب ملء حقل شركة الوسيط قبل تحديد المهمة كمكتملة",
     "requiredReopenReason": "الرجاء إدخال سبب إعادة الفتح",

@@ -10,7 +10,7 @@ const STORAGE_KEY = 'tktzain_mock_db';
 
 // Bump this whenever the seed shape changes so browsers holding an older
 // snapshot in localStorage automatically re-seed on next load.
-const SEED_VERSION = 2;
+const SEED_VERSION = 3;
 
 const GOVERNORATES = [
   'Baghdad', 'Basra', 'Mosul', 'Kirkuk', 'Erbil',
@@ -33,8 +33,8 @@ function seed() {
   // again, see git history of this file for the previous blueprint.)
   const users = [
     { id: 1, name: 'Admin', email: 'admin@example.com', password: 'admin', phone: '07700000001', role: 'super_admin', is_active: true, created_at: ago(120), updated_at: ago(120) },
-    { id: 2, name: 'User',  email: 'user@example.com',  password: 'user',  phone: '07700000002', role: 'user',        is_active: true, created_at: ago(118), updated_at: ago(118) },
-    { id: 3, name: 'Staff', email: 'staff@example.com', password: 'staff', phone: '07700000003', role: 'staff',       is_active: true, created_at: ago(118), updated_at: ago(118) },
+    { id: 2, name: 'Zain',  email: 'zain@example.com',  password: 'zain',  phone: '07700000002', role: 'zain',        is_active: true, created_at: ago(118), updated_at: ago(118) },
+    { id: 3, name: 'الوسيط', email: 'alwaseet@example.com', password: 'alwaseet', phone: '07700000003', role: 'الوسيط',       is_active: true, created_at: ago(118), updated_at: ago(118) },
   ];
 
   return {

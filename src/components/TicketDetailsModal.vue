@@ -154,7 +154,7 @@ const fieldLabel = (field) => ({
 // Super admins can edit any ticket. Users can edit only their own pending tickets.
 const canEdit = computed(() => {
   if (authStore.isSuperAdmin) return true;
-  if (authStore.isUser) {
+  if (authStore.isZainRole) {
     return props.ticket.status !== 'Complete'
       && props.ticket.createdById === authStore.currentUser?.id;
   }

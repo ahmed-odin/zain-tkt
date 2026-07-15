@@ -319,6 +319,41 @@ export function exportCompletedTicketsToExcel(completedTickets) {
   XLSX.writeFile(wb, filename);
 }
 
+export function exportPendingTicketsToExcel(pendingTickets) {
+  const data = pendingTickets.map((ticket) => {
+    let statusText = 'قيد الانتظار';
+    if (ticket.status === 'Reopened') statusText = 'أعيد فتحها';
+    else if (ticket.status === 'Replied') statusText = 'تم الرد';
+
+    return {
+      'رقم': `#${ticket.id}`,
+      'MISSDN': ticket.missdn,
+      'المحافظة': ticket.governorate,
+      'الحالة': statusText,
+      'بواسطة': ticket.createdBy,
+      'تاريخ الإنشاء': formatDateTime(ticket.createdAt),
+      'تعليق': ticket.comments || ''
+    };
+  });
+
+  const ws = XLSX.utils.json_to_sheet(data, {
+    header: ['رقم', 'MISSDN', 'المحافظة', 'الحالة', 'بواسطة', 'تاريخ الإنشاء', 'تعليق'],
+    origin: 'A1'
+  });
+
+  ws['!cols'] = [
+    { wch: 8 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 14 },
+    { wch: 20 }, { wch: 24 }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Pending Tickets');
+
+  const date = new Date();
+  const filename = `pending_tickets_${String(date.getDate()).padStart(2, '0')}_${String(date.getMonth() + 1).padStart(2, '0')}_${date.getFullYear()}.xlsx`;
+  XLSX.writeFile(wb, filename);
+}
+
 export async function parsePendingTicketsExcel(file) {
   const { data: rawRows } = await readExcelFile(file);
 

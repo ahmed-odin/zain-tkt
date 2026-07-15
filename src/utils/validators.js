@@ -8,6 +8,9 @@ export function validateMissdn(value) {
   if (!/^[0-9]+$/.test(value)) {
     return 'validation.invalidMissdn';
   }
+  if (value[0] === '0') {
+    return 'validation.noLeadingZeroMissdn';
+  }
   if (value.length !== 10) {
     return 'validation.lengthMissdn';
   }
@@ -28,7 +31,10 @@ export function validateGovernorate(value) {
  * Validate comments
  */
 export function validateComments(value) {
-  if (value && value.length > 500) {
+  if (!value || !value.trim()) {
+    return 'validation.requiredComments';
+  }
+  if (value.length > 500) {
     return 'validation.maxLengthComments';
   }
   return '';

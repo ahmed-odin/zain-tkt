@@ -76,7 +76,9 @@
 
         <!-- Comments -->
         <div class="flex flex-col gap-1">
-          <label for="create-comments" class="text-sm font-medium text-text-primary">{{ $t('modal.fields.comments') }}</label>
+          <label for="create-comments" class="text-sm font-medium text-text-primary">
+            {{ $t('modal.fields.comments') }} <span class="text-danger">*</span>
+          </label>
           <textarea
             id="create-comments"
             v-model="form.comments"

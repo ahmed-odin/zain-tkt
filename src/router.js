@@ -22,7 +22,7 @@ const routes = [
         path: 'create',
         name: 'CreateTicket',
         component: () => import('./views/CreateTicketPage.vue'),
-        meta: { roles: ['user', 'super_admin'] }
+        meta: { roles: ['zain', 'super_admin'] }
       },
       {
         path: 'pending',

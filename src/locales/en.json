@@ -30,18 +30,18 @@
     "next": "Next"
   },
   "nav": {
-    "title": "Ticket System",
+    "title": "Delivery Issues",
     "subtitle": "Management",
     "logout": "Logout",
     "admin": "Administrator",
     "roles": {
       "super_admin": "Super Admin",
-      "user": "User",
-      "staff": "Staff"
+      "zain": "Zain",
+      "الوسيط": "Al-Waseet"
     }
   },
   "dashboard": {
-    "title": "Ticket Management System",
+    "title": "Delivery Issues",
     "subtitle": "Manage and track all your tickets",
     "createNew": "Create New Ticket",
     "stats": {
@@ -121,11 +121,11 @@
     "replyTitle": "Reply to Ticket #{id}",
     "fields": {
       "title": "MISSDN",
-      "titlePlaceholder": "78*******",
+      "titlePlaceholder": "Ex:7869766706",
       "reason": "Alwaseet Company",
       "reasonPlaceholder": "Enter company name or details...",
       "governorate": "Governorate",
-      "comments": "Comments / Description",
+      "comments": "Zain Comment",
       "commentsPlaceholder": "Add any additional details",
       "intermediary": "Alwaseet Company",
       "intermediaryPlaceholder": "Enter company name or details...",
@@ -205,8 +205,8 @@
     "importSuccess": "{count} tickets imported successfully"
   },
   "login": {
-    "title": "Ticket Management",
-    "subtitle": "Sign in to your account",
+    "title": "Delivery Issues",
+    "subtitle": "Delivery issues and complaints tracking system",
     "identifier": "Username or Email",
     "identifierPlaceholder": "Enter your username or email",
     "username": "Username",
@@ -221,8 +221,10 @@
   "validation": {
     "requiredMissdn": "MISSDN is required",
     "lengthMissdn": "MISSDN must be exactly 10 digits",
+    "noLeadingZeroMissdn": "MISSDN must be 10 digits and cannot start with zero",
     "invalidMissdn": "MISSDN must contain only numbers",
     "requiredGov": "Please select a governorate",
+    "requiredComments": "Comments are required",
     "maxLengthComments": "Comments must not exceed 500 characters",
     "requiredAlwaseetCompany": "Alwaseet Company field is required before marking as complete",
     "requiredReopenReason": "Please enter a reason for reopening",

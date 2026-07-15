@@ -15,12 +15,19 @@
           />
         </div>
         <button
-          v-if="authStore.isUser || authStore.isSuperAdmin"
+          v-if="authStore.isZainRole || authStore.isSuperAdmin"
           type="button"
           @click="showImportModal = true"
           class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
         >
           <Icon icon="lucide:upload" class="h-4 w-4" /> {{ $t('actions.importExcel') }}
+        </button>
+        <button
+          type="button"
+          @click="exportToExcel"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium text-text-secondary shadow-sm transition-colors hover:bg-bg-secondary hover:text-text-primary"
+        >
+          <Icon icon="lucide:download" class="h-4 w-4" /> {{ $t('excel.exportButton') }}
         </button>
       </div>
     </div>
@@ -205,6 +212,7 @@ import { useTicketStore } from '../stores/ticketStore';
 import { useAuthStore } from '../stores/authStore';
 import { formatDateTime } from '../utils/dateFormatter';
 import { useI18n } from 'vue-i18n';
+import { exportPendingTicketsToExcel } from '../utils/excelUtils';
 import EditTicketModal from '../components/EditTicketModal.vue';
 import TicketDetailsModal from '../components/TicketDetailsModal.vue';
 import ImportExcelModal from '../components/ImportExcelModal.vue';
@@ -221,14 +229,14 @@ const authStore = useAuthStore();
 const { t } = useI18n();
 
 // Role-based action permissions
-const canComplete = computed(() => authStore.isStaff || authStore.isSuperAdmin);
+const canComplete = computed(() => authStore.isAlwaseetRole || authStore.isSuperAdmin);
 const canDelete = computed(() => authStore.isSuperAdmin);
 const canEdit = (ticket) =>
-  authStore.isSuperAdmin || (authStore.isUser && ticket.createdById === authStore.currentUser?.id);
+  authStore.isSuperAdmin || (authStore.isZainRole && ticket.createdById === authStore.currentUser?.id);
 // The ticket owner (or a super admin) can reply to a reopened ticket.
 const canReply = (ticket) =>
   ticket.status === 'Reopened' &&
-  (authStore.isSuperAdmin || (authStore.isUser && ticket.createdById === authStore.currentUser?.id));
+  (authStore.isSuperAdmin || (authStore.isZainRole && ticket.createdById === authStore.currentUser?.id));
 
 // Current page of rows (the server already returns only pending/reopened tickets).
 const pending = computed(() => ticketStore.tickets);
@@ -258,6 +266,18 @@ onMounted(async () => {
 });
 
 const openDetails = (t) => { viewing.value = { ...t }; };
+
+const exportToExcel = async () => {
+  const params = {
+    search: query.value || undefined,
+    date_from: dateFrom.value || undefined,
+    date_to: dateTo.value || undefined,
+    user_id: userFilter.value || undefined,
+    governorate: governorate.value || undefined,
+  };
+  const rows = await ticketStore.fetchPendingForExport(params);
+  exportPendingTicketsToExcel(rows);
+};
 const openEdit = (t) => { editing.value = { ...t }; };
 const editFromDetails = (t) => { viewing.value = null; editing.value = { ...t }; };
 const handleImport = async (tickets) => {

@@ -54,8 +54,8 @@
             v-model="form.role"
             class="rounded-lg border border-border bg-white px-3 py-2 text-sm focus:border-primary focus:outline-none"
           >
-            <option value="user">{{ $t('nav.roles.user') }}</option>
-            <option value="staff">{{ $t('nav.roles.staff') }}</option>
+            <option value="zain">{{ $t('nav.roles.zain') }}</option>
+            <option value="الوسيط">{{ $t('nav.roles.الوسيط') }}</option>
             <option value="super_admin">{{ $t('nav.roles.super_admin') }}</option>
           </select>
         </div>
@@ -113,7 +113,7 @@ const form = ref({
   name: '',
   email: '',
   phone: '',
-  role: 'user',
+  role: 'zain',
   password: ''
 });
 
@@ -130,7 +130,7 @@ onMounted(() => {
       name: props.user.name || '',
       email: props.user.email || '',
       phone: props.user.phone || '',
-      role: props.user.role || 'user',
+      role: props.user.role || 'zain',
       password: ''
     };
   }

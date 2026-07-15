@@ -194,7 +194,7 @@ const authStore = useAuthStore();
 
 // Role-based action permissions.
 // Completed tickets can only be edited by super admins — users may not edit a done ticket.
-const canReopen = computed(() => authStore.isStaff || authStore.isSuperAdmin);
+const canReopen = computed(() => authStore.isAlwaseetRole || authStore.isSuperAdmin);
 const canDelete = computed(() => authStore.isSuperAdmin);
 const canEdit = () => authStore.isSuperAdmin;
 

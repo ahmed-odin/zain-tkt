@@ -89,6 +89,27 @@ export const useTicketStore = defineStore('ticket', () => {
     }
   };
 
+  const fetchPendingForExport = async (params = {}) => {
+    try {
+      const response = await api.get('/tickets/pending', {
+        params: { ...params, per_page: 100, page: 1 },
+      });
+      let rows = response.data.tickets.map(mapTicket);
+      const meta = response.data.meta;
+      // Pull remaining pages if the result spans more than one.
+      if (meta && meta.last_page > 1) {
+        for (let p = 2; p <= meta.last_page; p++) {
+          const next = await api.get('/tickets/pending', { params: { ...params, per_page: 100, page: p } });
+          rows = rows.concat(next.data.tickets.map(mapTicket));
+        }
+      }
+      return rows;
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Unable to export tickets';
+      return [];
+    }
+  };
+
   const fetchFilterOptions = async () => {
     try {
       const response = await api.get('/tickets/filter-users');
@@ -268,6 +289,7 @@ export const useTicketStore = defineStore('ticket', () => {
     fetchPendingTickets,
     fetchCompletedTickets,
     fetchCompletedForExport,
+    fetchPendingForExport,
     fetchFilterOptions,
     createTicket,
     bulkCreateTickets,

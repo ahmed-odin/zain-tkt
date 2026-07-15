@@ -173,8 +173,8 @@ const initials = (name) => {
 
 const roleStyle = (role) => ({
   super_admin: 'bg-violet-50 text-violet-700 ring-1 ring-inset ring-violet-200',
-  staff: 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200',
-  user: 'bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200',
+  'الوسيط': 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200',
+  zain: 'bg-slate-100 text-slate-600 ring-1 ring-inset ring-slate-200',
 }[role] || 'bg-slate-100 text-slate-600');
 
 const openCreate = () => { editingUser.value = null; showForm.value = true; };

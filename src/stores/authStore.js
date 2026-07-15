@@ -79,8 +79,8 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoggedIn = computed(() => isAuthenticated.value);
   const role = computed(() => currentUser.value?.role || null);
   const isSuperAdmin = computed(() => role.value === 'super_admin');
-  const isUser = computed(() => role.value === 'user');
-  const isStaff = computed(() => role.value === 'staff');
+  const isZainRole = computed(() => role.value === 'zain');
+  const isAlwaseetRole = computed(() => role.value === 'الوسيط');
 
   return {
     currentUser,
@@ -91,8 +91,8 @@ export const useAuthStore = defineStore('auth', () => {
     isLoggedIn,
     role,
     isSuperAdmin,
-    isUser,
-    isStaff,
+    isZainRole,
+    isAlwaseetRole,
     initializeAuth,
     login,
     logout

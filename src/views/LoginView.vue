@@ -80,6 +80,36 @@
             <Icon v-if="isLoading" icon="lucide:loader-2" class="h-4 w-4 animate-spin" />
             <span>{{ isLoading ? $t('login.signingIn') : $t('login.signIn') }}</span>
           </button>
+
+          <!-- Test Users Info -->
+          <div class="mt-4 rounded-xl border border-sky-100 bg-sky-50/50 p-4 text-right rtl:text-right ltr:text-left">
+            <h3 class="mb-3 text-xs font-semibold text-sky-700">
+              {{ locale === 'ar' ? 'حسابات الاختبار:' : 'Test Accounts:' }}
+            </h3>
+            <div class="space-y-2">
+              <div class="rounded-lg bg-white p-2.5 shadow-sm border border-slate-100 text-xs text-text-primary">
+                <span class="inline-block rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-800 mb-1">
+                  {{ locale === 'ar' ? 'مسؤول نظام' : 'System Admin' }}
+                </span>
+                <p class="font-mono text-slate-800">admin@example.com</p>
+                <p class="text-text-secondary mt-0.5">{{ locale === 'ar' ? 'كلمة المرور: admin' : 'Password: admin' }}</p>
+              </div>
+              <div class="rounded-lg bg-white p-2.5 shadow-sm border border-slate-100 text-xs text-text-primary">
+                <span class="inline-block rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold text-blue-800 mb-1">
+                  Zain
+                </span>
+                <p class="font-mono text-slate-800">zain@example.com</p>
+                <p class="text-text-secondary mt-0.5">{{ locale === 'ar' ? 'كلمة المرور: zain' : 'Password: zain' }}</p>
+              </div>
+              <div class="rounded-lg bg-white p-2.5 shadow-sm border border-slate-100 text-xs text-text-primary">
+                <span class="inline-block rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-bold text-green-800 mb-1">
+                  الوسيط
+                </span>
+                <p class="font-mono text-slate-800">alwaseet@example.com</p>
+                <p class="text-text-secondary mt-0.5">{{ locale === 'ar' ? 'كلمة المرور: alwaseet' : 'Password: alwaseet' }}</p>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
 
@@ -110,8 +140,8 @@ const { login } = useAuth();
 const { t, locale } = useI18n();
 
 const form = ref({
-  username: '',
-  password: ''
+  username: 'zain@example.com',
+  password: 'zain'
 });
 
 const errors = ref({});
